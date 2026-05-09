@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Abyss Watcher — Discord Bot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --void: #02000a;
+      --deep: #07011a;
+      --abyss: #0d0228;
+      --glow: #7b2fff;
+      --glow2: #a855f7;
+      --eye: #c084fc;
+      --gold: #e2c97e;
+      --smoke: rgba(123,47,255,0.15);
+      --text: #e8d5ff;
+      --muted: #8b6db0;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--void);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 400;
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* ── CANVAS ── */
+    #canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── VIGNETTE ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 40%, #02000a 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ── SECTIONS ── */
+    section, nav, footer {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 4rem;
+      border-bottom: 1px solid rgba(123,47,255,0.2);
+      backdrop-filter: blur(10px);
+      background: rgba(2,0,10,0.6);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-logo {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1.1rem;
+      color: var(--eye);
+      letter-spacing: 2px;
+      text-shadow: 0 0 20px var(--glow);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: color 0.3s, text-shadow 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--eye);
+      text-shadow: 0 0 12px var(--glow);
+    }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+
+    .eye-orb {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, #c084fc, #7b2fff 50%, #02000a);
+      box-shadow:
+        0 0 40px #7b2fff,
+        0 0 80px rgba(123,47,255,0.4),
+        0 0 120px rgba(123,47,255,0.2),
+        inset 0 0 30px rgba(0,0,0,0.6);
+      margin-bottom: 2rem;
+      animation: pulse-orb 4s ease-in-out infinite;
+      position: relative;
+    }
+
+    .eye-orb::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff 0%, #c084fc 40%, transparent 70%);
+      animation: eye-blink 6s ease-in-out infinite;
+    }
+
+    @keyframes pulse-orb {
+      0%, 100% { box-shadow: 0 0 40px #7b2fff, 0 0 80px rgba(123,47,255,0.4), 0 0 120px rgba(123,47,255,0.2), inset 0 0 30px rgba(0,0,0,0.6); }
+      50% { box-shadow: 0 0 60px #a855f7, 0 0 120px rgba(168,85,247,0.5), 0 0 180px rgba(168,85,247,0.25), inset 0 0 30px rgba(0,0,0,0.6); }
+    }
+
+    @keyframes eye-blink {
+      0%, 45%, 55%, 100% { transform: translate(-50%, -50%) scaleY(1); }
+      50% { transform: translate(-50%, -50%) scaleY(0.05); }
+    }
+
+    .hero-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 0 30px var(--glow), 0 0 60px rgba(123,47,255,0.4);
+      letter-spacing: 4px;
+      line-height: 1.1;
+      animation: fade-up 1s ease both;
+    }
+
+    .hero-sub {
+      margin-top: 1rem;
+      font-size: 1.2rem;
+      color: var(--muted);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      animation: fade-up 1s 0.2s ease both;
+    }
+
+    .hero-desc {
+      margin-top: 1.5rem;
+      max-width: 560px;
+      font-size: 1.05rem;
+      color: #c4a8e8;
+      line-height: 1.8;
+      font-weight: 300;
+      animation: fade-up 1s 0.4s ease both;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1.2rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fade-up 1s 0.6s ease both;
+    }
+
+    .btn {
+      padding: 0.85rem 2.2rem;
+      border-radius: 4px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #7b2fff, #a855f7);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(123,47,255,0.5);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 0 40px rgba(123,47,255,0.8), 0 0 80px rgba(123,47,255,0.3);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--eye);
+      border: 1px solid rgba(192,132,252,0.4);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(123,47,255,0.15);
+      border-color: var(--eye);
+      box-shadow: 0 0 20px rgba(123,47,255,0.3);
+      transform: translateY(-2px);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+      padding: 0.4rem 1rem;
+      border: 1px solid rgba(123,47,255,0.3);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+      animation: fade-up 1s 0.8s ease both;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4ade80;
+      box-shadow: 0 0 8px #4ade80;
+      animation: blink-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes blink-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--glow), transparent);
+      margin: 0 auto;
+      opacity: 0.4;
+    }
+
+    /* ── COMMANDS ── */
+    #commands {
+      padding: 6rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      color: var(--eye);
+      text-align: center;
+      letter-spacing: 3px;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 20px var(--glow);
+    }
+
+    .section-line {
+      width: 80px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--glow), transparent);
+      margin: 0.5rem auto 3rem;
+    }
+
+    .cmd-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .cmd-card {
+      background: rgba(13,2,40,0.7);
+      border: 1px solid rgba(123,47,255,0.2);
+      border-radius: 8px;
+      padding: 1.4rem 1.6rem;
+      transition: all 0.3s;
+      backdrop-filter: blur(8px);
+    }
+
+    .cmd-card:hover {
+      border-color: rgba(192,132,252,0.5);
+      background: rgba(123,47,255,0.1);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(123,47,255,0.2);
+    }
+
+    .cmd-category {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--glow2);
+      margin-bottom: 0.6rem;
+    }
+
+    .cmd-name {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1rem;
+      color: #fff;
+      margin-bottom: 0.4rem;
+    }
+
+    .cmd-name span {
+      color: var(--glow2);
+    }
+
+    .cmd-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    .cmd-aliases {
+      margin-top: 0.6rem;
+      font-size: 0.78rem;
+      color: rgba(139,109,176,0.7);
+      font-style: italic;
+    }
+
+    /* ── FEATURES ── */
+    #features {
+      padding: 6rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feat-card {
+      background: rgba(7,1,26,0.8);
+      border: 1px solid rgba(123,47,255,0.15);
+      border-radius: 8px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .feat-card:hover {
+      border-color: rgba(192,132,252,0.4);
+      box-shadow: 0 0 30px rgba(123,47,255,0.15);
+    }
+
+    .feat-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .feat-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.95rem;
+      color: var(--eye);
+      margin-bottom: 0.6rem;
+      letter-spacing: 1px;
+    }
+
+    .feat-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    /* ── PREFIX INFO ── */
+    .prefix-box {
+      background: rgba(123,47,255,0.08);
+      border: 1px solid rgba(123,47,255,0.25);
+      border-radius: 8px;
+      padding: 1.5rem 2rem;
+      text-align: center;
+      max-width: 600px;
+      margin: 3rem auto 0;
+    }
+
+    .prefix-box p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+
+    .prefix-box code {
+      background: rgba(123,47,255,0.2);
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      color: var(--eye);
+      font-family: monospace;
+      font-size: 0.95rem;
+    }
+
+    /* ── CTA ── */
+    #cta {
+      padding: 6rem 2rem;
+      text-align: center;
+    }
+
+    .cta-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      color: #fff;
+      text-shadow: 0 0 30px var(--glow);
+      margin-bottom: 1rem;
+    }
+
+    .cta-sub {
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid rgba(123,47,255,0.15);
+      padding: 2rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-logo {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.9rem;
+      color: var(--muted);
+      letter-spacing: 2px;
+    }
+
+    .footer-text {
+      color: var(--muted);
+      font-size: 0.85rem;
+      opacity: 0.6;
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.2rem; }
+      footer { padding: 1.5rem; flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Abyss Watcher</div>
+  <ul class="nav-links">
+    <li><a href="#commands">Commands</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#cta">Invite</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="eye-orb"></div>
+  <h1 class="hero-title">Abyss Watcher</h1>
+  <p class="hero-sub">Economy • Games • Utility</p>
+  <p class="hero-desc">
+    A dark and powerful bot forged in the abyss. Earn Shadow Essence, gamble your fate,
+    claim daily rewards, and dominate the economy of the void.
+  </p>
+  <div class="hero-buttons">
+    <a href="YOUR_INVITE_LINK_HERE" class="btn btn-primary" target="_blank">+ Invite Bot</a>
+    <a href="#commands" class="btn btn-secondary">View Commands</a>
+  </div>
+  <div class="status-badge">
+    <span class="status-dot"></span>
+    Bot Status: Online
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FEATURES -->
+<section id="features">
+  <h2 class="section-title">What Awaits You</h2>
+  <div class="section-line"></div>
+  <div class="feat-grid">
+    <div class="feat-card">
+      <span class="feat-icon">🌑</span>
+      <div class="feat-title">Shadow Economy</div>
+      <p class="feat-desc">Earn, spend, and trade Shadow Essence across servers with a powerful global economy system.</p>
+    </div>
+    <div class="feat-card">
+      <span class="feat-icon">🎰</span>
+      <div class="feat-title">Games of Fate</div>
+      <p class="feat-desc">Test your luck with coinflip, slot machines, and more high-stakes games of chance.</p>
+    </div>
+    <div class="feat-card">
+      <span class="feat-icon">⚔️</span>
+      <div class="feat-title">Dual Commands</div>
+      <p class="feat-desc">Every command works as both a slash command and a prefix command for maximum flexibility.</p>
+    </div>
+    <div class="feat-card">
+      <span class="feat-icon">🔮</span>
+      <div class="feat-title">Daily Rewards</div>
+      <p class="feat-desc">Claim your daily Shadow Essence and watch your vault grow over time.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- COMMANDS -->
+<section id="commands">
+  <h2 class="section-title">Commands</h2>
+  <div class="section-line"></div>
+
+  <div class="cmd-grid">
+    <div class="cmd-card">
+      <div class="cmd-category">Economy</div>
+      <div class="cmd-name"><span>/</span>balance</div>
+      <p class="cmd-desc">Check your current Shadow Essence balance.</p>
+      <p class="cmd-aliases">Aliases: bal, b</p>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-category">Economy</div>
+      <div class="cmd-name"><span>/</span>daily</div>
+      <p class="cmd-desc">Claim your daily Shadow Essence reward. 24 hour cooldown.</p>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-category">Economy</div>
+      <div class="cmd-name"><span>/</span>give</div>
+      <p class="cmd-desc">Send Shadow Essence to another user with a confirmation system.</p>
+      <p class="cmd-aliases">Aliases: g</p>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-category">Games</div>
+      <div class="cmd-name"><span>/</span>coinflip</div>
+      <p class="cmd-desc">Bet your Shadow Essence on a coin flip. Choose head or tails.</p>
+      <p class="cmd-aliases">Aliases: cf &nbsp;|&nbsp; Choices: h, t</p>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-category">Games</div>
+      <div class="cmd-name"><span>/</span>slots</div>
+      <p class="cmd-desc">Spin the slot machine with custom payout multipliers up to 50x.</p>
+      <p class="cmd-aliases">Aliases: sl</p>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-category">Fun</div>
+      <div class="cmd-name"><span>/</span>meme</div>
+      <p class="cmd-desc">Get a random meme delivered from the depths of the internet.</p>
+      <p class="cmd-aliases">Aliases: m</p>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-category">Utility</div>
+      <div class="cmd-name"><span>/</span>avatar</div>
+      <p class="cmd-desc">Display the avatar of any user in full resolution.</p>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-category">Utility</div>
+      <div class="cmd-name"><span>/</span>ping</div>
+      <p class="cmd-desc">Check the bot's response latency in milliseconds.</p>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-category">Utility</div>
+      <div class="cmd-name"><span>/</span>stats</div>
+      <p class="cmd-desc">View the bot's uptime, memory usage, and CPU load.</p>
+    </div>
+  </div>
+
+  <div class="prefix-box">
+    <p>All commands support both slash <code>/command</code> and prefix syntax.<br/>
+    Use <code>aw command</code> or <code>Aw command</code> for prefix commands.<br/>
+    Example: <code>aw cf 500 h</code> &nbsp;|&nbsp; <code>aw sl 1000</code> &nbsp;|&nbsp; <code>aw bal</code></p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CTA -->
+<section id="cta">
+  <h2 class="cta-title">Enter the Abyss</h2>
+  <p class="cta-sub">Add Abyss Watcher to your server and claim your Shadow Essence.</p>
+  <div class="hero-buttons">
+    <a href="YOUR_INVITE_LINK_HERE" class="btn btn-primary" target="_blank">+ Invite Bot</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Abyss Watcher</div>
+  <div class="footer-text">🌑 Economy • Games • Utility</div>
+</footer>
+
+<!-- STARFIELD -->
+<script>
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+
+  let stars = [];
+  let W, H;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function initStars() {
+    stars = [];
+    for (let i = 0; i < 200; i++) {
+      stars.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: Math.random() * 1.2 + 0.2,
+        alpha: Math.random(),
+        speed: Math.random() * 0.3 + 0.05,
+        flicker: Math.random() * 0.02 + 0.005,
+        dir: Math.random() > 0.5 ? 1 : -1,
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    stars.forEach(s => {
+      s.alpha += s.flicker * s.dir;
+      if (s.alpha >= 1 || s.alpha <= 0) s.dir *= -1;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(192,132,252,${s.alpha})`;
+      ctx.fill();
+    });
+
+    // Floating purple orbs
+    const t = Date.now() / 4000;
+    const orbs = [
+      { x: W * 0.2, y: H * 0.3, r: 200, c: 'rgba(123,47,255,0.04)' },
+      { x: W * 0.8, y: H * 0.6, r: 250, c: 'rgba(168,85,247,0.03)' },
+      { x: W * 0.5, y: H * 0.8, r: 180, c: 'rgba(123,47,255,0.03)' },
+    ];
+    orbs.forEach((o, i) => {
+      const ox = o.x + Math.sin(t + i) * 40;
+      const oy = o.y + Math.cos(t + i * 1.3) * 30;
+      const grad = ctx.createRadialGradient(ox, oy, 0, ox, oy, o.r);
+      grad.addColorStop(0, o.c);
+      grad.addColorStop(1, 'transparent');
+      ctx.beginPath();
+      ctx.arc(ox, oy, o.r, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  initStars();
+  draw();
+  window.addEventListener('resize', () => { resize(); initStars(); });
+</script>
+
+</body>
+</html>
