@@ -420,6 +420,171 @@
       font-size: 0.95rem;
     }
 
+    /* ── SUPPORT ── */
+    #support {
+      padding: 6rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .support-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .support-card {
+      background: rgba(13,2,40,0.7);
+      border: 1px solid rgba(123,47,255,0.2);
+      border-radius: 8px;
+      padding: 2rem;
+      transition: all 0.3s;
+      backdrop-filter: blur(8px);
+      text-align: center;
+    }
+
+    .support-card:hover {
+      border-color: rgba(192,132,252,0.5);
+      background: rgba(123,47,255,0.1);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(123,47,255,0.2);
+    }
+
+    .support-icon { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+
+    .support-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1rem;
+      color: var(--eye);
+      margin-bottom: 0.6rem;
+      letter-spacing: 1px;
+    }
+
+    .support-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+      font-weight: 300;
+      margin-bottom: 1.2rem;
+    }
+
+    .support-btn {
+      display: inline-block;
+      padding: 0.6rem 1.5rem;
+      border-radius: 4px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 1px solid rgba(192,132,252,0.4);
+      color: var(--eye);
+      background: transparent;
+    }
+
+    .support-btn:hover {
+      background: rgba(123,47,255,0.2);
+      border-color: var(--eye);
+      box-shadow: 0 0 15px rgba(123,47,255,0.3);
+    }
+
+    /* Report form */
+    .report-form {
+      background: rgba(13,2,40,0.7);
+      border: 1px solid rgba(123,47,255,0.2);
+      border-radius: 8px;
+      padding: 2.5rem;
+      max-width: 700px;
+      margin: 0 auto;
+      backdrop-filter: blur(8px);
+    }
+
+    .report-form h3 {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1.1rem;
+      color: var(--eye);
+      margin-bottom: 1.5rem;
+      letter-spacing: 2px;
+      text-align: center;
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+
+    .form-group label {
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      background: rgba(123,47,255,0.08);
+      border: 1px solid rgba(123,47,255,0.25);
+      border-radius: 4px;
+      padding: 0.7rem 1rem;
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+      outline: none;
+      width: 100%;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--glow);
+      box-shadow: 0 0 10px rgba(123,47,255,0.2);
+    }
+
+    .form-group select option { background: #0d0228; }
+
+    .form-group textarea { resize: vertical; min-height: 120px; }
+
+    .form-submit {
+      width: 100%;
+      padding: 0.9rem;
+      background: linear-gradient(135deg, #7b2fff, #a855f7);
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 0.5rem;
+    }
+
+    .form-submit:hover {
+      box-shadow: 0 0 20px rgba(123,47,255,0.6);
+      transform: translateY(-1px);
+    }
+
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: 2rem;
+      color: #4ade80;
+      font-size: 1rem;
+    }
+
+    .form-success .success-icon { font-size: 3rem; margin-bottom: 1rem; display: block; }
+
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+
     /* ── CTA ── */
     #cta {
       padding: 6rem 2rem;
@@ -482,6 +647,7 @@
   <ul class="nav-links">
     <li><a href="#commands">Commands</a></li>
     <li><a href="#features">Features</a></li>
+    <li><a href="#support">Support</a></li>
     <li><a href="#cta">Invite</a></li>
   </ul>
 </nav>
@@ -604,6 +770,76 @@
 
 <div class="divider"></div>
 
+<!-- SUPPORT -->
+<section id="support">
+  <h2 class="section-title">Support</h2>
+  <div class="section-line"></div>
+
+  <div class="support-grid">
+    <div class="support-card">
+      <span class="support-icon">🐛</span>
+      <div class="support-title">Bug Report</div>
+      <p class="support-desc">Found something broken? Report it below and we'll fix it as soon as possible.</p>
+      <a href="#report-form" class="support-btn" onclick="setType('Bug Report')">Report Bug</a>
+    </div>
+    <div class="support-card">
+      <span class="support-icon">💡</span>
+      <div class="support-title">Feature Request</div>
+      <p class="support-desc">Have an idea for a new command or feature? We'd love to hear it.</p>
+      <a href="#report-form" class="support-btn" onclick="setType('Feature Request')">Suggest Feature</a>
+    </div>
+    <div class="support-card">
+      <span class="support-icon">💬</span>
+      <div class="support-title">Discord Server</div>
+      <p class="support-desc">Join our support server for real-time help, updates, and community discussion.</p>
+      <a href="YOUR_DISCORD_SERVER_INVITE" class="support-btn" target="_blank">Join Server</a>
+    </div>
+  </div>
+
+  <!-- REPORT FORM -->
+  <div class="report-form" id="report-form">
+    <h3>Submit a Report</h3>
+    <div id="formContent">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Your Discord Username</label>
+          <input type="text" id="username" placeholder="e.g. username#0000"/>
+        </div>
+        <div class="form-group">
+          <label>Report Type</label>
+          <select id="reportType">
+            <option value="Bug Report">🐛 Bug Report</option>
+            <option value="Feature Request">💡 Feature Request</option>
+            <option value="Other">❓ Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Command / Area Affected</label>
+        <input type="text" id="command" placeholder="e.g. /slots, aw coinflip, balance..."/>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="description" placeholder="Describe the bug or feature request in detail..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Steps to Reproduce (for bugs)</label>
+        <textarea id="steps" placeholder="1. Used /slots with 1000 bet&#10;2. Bot didn't respond&#10;3. ..." style="min-height:90px"></textarea>
+      </div>
+      <button class="form-submit" onclick="submitReport()">⚔️ Submit Report</button>
+    </div>
+    <div class="form-success" id="formSuccess">
+      <span class="success-icon">✅</span>
+      <strong>Report Submitted!</strong><br/>
+      Thank you for helping improve Abyss Watcher.<br/>
+      <span style="color:var(--muted); font-size:0.85rem;">We'll look into it as soon as possible.</span><br/><br/>
+      <a href="#support" class="support-btn" onclick="resetForm()">Submit Another</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
 <!-- CTA -->
 <section id="cta">
   <h2 class="cta-title">Enter the Abyss</h2>
@@ -678,6 +914,64 @@
     });
 
     requestAnimationFrame(draw);
+  }
+
+  function setType(type) {
+    setTimeout(() => {
+      document.getElementById('reportType').value = type;
+    }, 300);
+  }
+
+  async function submitReport() {
+    const username = document.getElementById('username').value.trim();
+    const desc = document.getElementById('description').value.trim();
+    if (!username || !desc) {
+      alert('Please fill in at least your Discord username and description.');
+      return;
+    }
+
+    const btn = document.querySelector('.form-submit');
+    btn.textContent = 'Submitting...';
+    btn.disabled = true;
+
+    const data = {
+      username: username,
+      type: document.getElementById('reportType').value,
+      command: document.getElementById('command').value,
+      description: desc,
+      steps: document.getElementById('steps').value,
+    };
+
+    try {
+      const res = await fetch('https://formspree.io/f/xnjwovkr', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (res.ok) {
+        document.getElementById('formContent').style.display = 'none';
+        document.getElementById('formSuccess').style.display = 'block';
+      } else {
+        alert('Something went wrong. Please try again.');
+        btn.textContent = '⚔️ Submit Report';
+        btn.disabled = false;
+      }
+    } catch (err) {
+      alert('Network error. Please try again.');
+      btn.textContent = '⚔️ Submit Report';
+      btn.disabled = false;
+    }
+  }
+
+  function resetForm() {
+    document.getElementById('username').value = '';
+    document.getElementById('command').value = '';
+    document.getElementById('description').value = '';
+    document.getElementById('steps').value = '';
+    document.getElementById('reportType').value = 'Bug Report';
+    document.getElementById('formContent').style.display = 'block';
+    document.getElementById('formSuccess').style.display = 'none';
   }
 
   resize();
