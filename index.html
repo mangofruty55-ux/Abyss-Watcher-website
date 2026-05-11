@@ -20,7 +20,6 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     html { scroll-behavior: smooth; }
 
     body {
@@ -33,178 +32,197 @@
     }
 
     /* ── CANVAS ── */
-    #canvas {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-    }
+    #canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 
     /* ── VIGNETTE ── */
     body::after {
       content: '';
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background: radial-gradient(ellipse at center, transparent 40%, #02000a 100%);
-      pointer-events: none;
-      z-index: 1;
+      pointer-events: none; z-index: 1;
     }
 
-    /* ── SECTIONS ── */
-    section, nav, footer {
-      position: relative;
-      z-index: 2;
-    }
+    section, nav, footer { position: relative; z-index: 2; }
 
     /* ── NAV ── */
     nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      display: flex; justify-content: space-between; align-items: center;
       padding: 1.5rem 4rem;
       border-bottom: 1px solid rgba(123,47,255,0.2);
       backdrop-filter: blur(10px);
       background: rgba(2,0,10,0.6);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      position: sticky; top: 0; z-index: 100;
     }
 
     .nav-logo {
       font-family: 'Cinzel Decorative', serif;
-      font-size: 1.1rem;
-      color: var(--eye);
-      letter-spacing: 2px;
-      text-shadow: 0 0 20px var(--glow);
+      font-size: 1.1rem; color: var(--eye);
+      letter-spacing: 2px; text-shadow: 0 0 20px var(--glow);
     }
 
-    .nav-links {
-      display: flex;
-      gap: 2.5rem;
-      list-style: none;
-    }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
 
     .nav-links a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 1rem;
-      font-weight: 500;
-      letter-spacing: 1px;
-      text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+      font-size: 1rem; font-weight: 500;
+      letter-spacing: 1px; text-transform: uppercase;
       transition: color 0.3s, text-shadow 0.3s;
     }
 
-    .nav-links a:hover {
-      color: var(--eye);
-      text-shadow: 0 0 12px var(--glow);
-    }
+    .nav-links a:hover { color: var(--eye); text-shadow: 0 0 12px var(--glow); }
 
     /* ── HERO ── */
     #hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 4rem 2rem;
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 4rem 2rem;
+    }
+
+    /* ── EYE ── */
+    .eye-container {
+      width: 160px; height: 160px;
+      margin-bottom: 2rem;
+      position: relative;
     }
 
     .eye-orb {
-      width: 140px;
-      height: 140px;
+      width: 160px; height: 160px;
       border-radius: 50%;
-      background: radial-gradient(circle at 40% 40%, #c084fc, #7b2fff 50%, #02000a);
+      background: radial-gradient(circle at 40% 40%, #1a0040, #0d0020);
       box-shadow:
         0 0 40px #7b2fff,
         0 0 80px rgba(123,47,255,0.4),
         0 0 120px rgba(123,47,255,0.2),
-        inset 0 0 30px rgba(0,0,0,0.6);
-      margin-bottom: 2rem;
+        inset 0 0 40px rgba(0,0,0,0.8);
       animation: pulse-orb 4s ease-in-out infinite;
       position: relative;
+      overflow: hidden;
     }
 
-    .eye-orb::before {
+    /* Outer ring glow */
+    .eye-orb::after {
+      content: '';
+      position: absolute; inset: 6px;
+      border-radius: 50%;
+      border: 2px solid rgba(192,132,252,0.25);
+      box-shadow: inset 0 0 20px rgba(123,47,255,0.3);
+      pointer-events: none;
+    }
+
+    /* Iris — moves with cursor */
+    .eye-iris {
+      position: absolute;
+      width: 76px; height: 76px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%,
+        #9333ea, #5b21b6 40%, #2e1065 70%, #0d0020
+      );
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      transition: transform 0.06s ease-out;
+      box-shadow: 0 0 15px rgba(147,51,234,0.6);
+    }
+
+    /* Pupil */
+    .eye-pupil {
+      position: absolute;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #1a0040, #000);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 8px rgba(0,0,0,0.9);
+    }
+
+    /* Pupil shine */
+    .eye-pupil::before {
       content: '';
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 50px;
-      height: 50px;
+      width: 9px; height: 9px;
       border-radius: 50%;
-      background: radial-gradient(circle, #fff 0%, #c084fc 40%, transparent 70%);
-      animation: eye-blink 6s ease-in-out infinite;
+      background: rgba(255,255,255,0.85);
+      top: 5px; left: 5px;
+    }
+
+    /* Eyelid blink top */
+    .eye-lid {
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 50%;
+      background: #02000a;
+      border-radius: 160px 160px 0 0;
+      transform-origin: top center;
+      transform: scaleY(0);
+      animation: eye-blink 7s ease-in-out infinite;
+      z-index: 10;
+    }
+
+    /* Eyelid blink bottom */
+    .eye-lid-bottom {
+      position: absolute;
+      bottom: 0; left: 0; right: 0; height: 50%;
+      background: #02000a;
+      border-radius: 0 0 160px 160px;
+      transform-origin: bottom center;
+      transform: scaleY(0);
+      animation: eye-blink-bottom 7s ease-in-out infinite;
+      z-index: 10;
     }
 
     @keyframes pulse-orb {
-      0%, 100% { box-shadow: 0 0 40px #7b2fff, 0 0 80px rgba(123,47,255,0.4), 0 0 120px rgba(123,47,255,0.2), inset 0 0 30px rgba(0,0,0,0.6); }
-      50% { box-shadow: 0 0 60px #a855f7, 0 0 120px rgba(168,85,247,0.5), 0 0 180px rgba(168,85,247,0.25), inset 0 0 30px rgba(0,0,0,0.6); }
+      0%, 100% { box-shadow: 0 0 40px #7b2fff, 0 0 80px rgba(123,47,255,0.4), 0 0 120px rgba(123,47,255,0.2), inset 0 0 40px rgba(0,0,0,0.8); }
+      50% { box-shadow: 0 0 60px #a855f7, 0 0 120px rgba(168,85,247,0.5), 0 0 180px rgba(168,85,247,0.25), inset 0 0 40px rgba(0,0,0,0.8); }
     }
 
     @keyframes eye-blink {
-      0%, 45%, 55%, 100% { transform: translate(-50%, -50%) scaleY(1); }
-      50% { transform: translate(-50%, -50%) scaleY(0.05); }
+      0%, 44%, 56%, 100% { transform: scaleY(0); }
+      50% { transform: scaleY(1); }
+    }
+
+    @keyframes eye-blink-bottom {
+      0%, 44%, 56%, 100% { transform: scaleY(0); }
+      50% { transform: scaleY(1); }
     }
 
     .hero-title {
       font-family: 'Cinzel Decorative', serif;
       font-size: clamp(2.5rem, 6vw, 5rem);
-      font-weight: 900;
-      color: #fff;
+      font-weight: 900; color: #fff;
       text-shadow: 0 0 30px var(--glow), 0 0 60px rgba(123,47,255,0.4);
-      letter-spacing: 4px;
-      line-height: 1.1;
+      letter-spacing: 4px; line-height: 1.1;
       animation: fade-up 1s ease both;
     }
 
     .hero-sub {
-      margin-top: 1rem;
-      font-size: 1.2rem;
-      color: var(--muted);
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      animation: fade-up 1s 0.2s ease both;
+      margin-top: 1rem; font-size: 1.2rem;
+      color: var(--muted); letter-spacing: 3px;
+      text-transform: uppercase; animation: fade-up 1s 0.2s ease both;
     }
 
     .hero-desc {
-      margin-top: 1.5rem;
-      max-width: 560px;
-      font-size: 1.05rem;
-      color: #c4a8e8;
-      line-height: 1.8;
-      font-weight: 300;
+      margin-top: 1.5rem; max-width: 560px;
+      font-size: 1.05rem; color: #c4a8e8;
+      line-height: 1.8; font-weight: 300;
       animation: fade-up 1s 0.4s ease both;
     }
 
     .hero-buttons {
-      display: flex;
-      gap: 1.2rem;
-      margin-top: 2.5rem;
-      flex-wrap: wrap;
-      justify-content: center;
+      display: flex; gap: 1.2rem; margin-top: 2.5rem;
+      flex-wrap: wrap; justify-content: center;
       animation: fade-up 1s 0.6s ease both;
     }
 
     .btn {
-      padding: 0.85rem 2.2rem;
-      border-radius: 4px;
+      padding: 0.85rem 2.2rem; border-radius: 4px;
       font-family: 'Rajdhani', sans-serif;
-      font-size: 1rem;
-      font-weight: 600;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      text-decoration: none;
-      cursor: pointer;
-      transition: all 0.3s;
-      border: none;
+      font-size: 1rem; font-weight: 600;
+      letter-spacing: 2px; text-transform: uppercase;
+      text-decoration: none; cursor: pointer;
+      transition: all 0.3s; border: none;
     }
 
     .btn-primary {
       background: linear-gradient(135deg, #7b2fff, #a855f7);
-      color: #fff;
-      box-shadow: 0 0 20px rgba(123,47,255,0.5);
+      color: #fff; box-shadow: 0 0 20px rgba(123,47,255,0.5);
     }
 
     .btn-primary:hover {
@@ -213,144 +231,56 @@
     }
 
     .btn-secondary {
-      background: transparent;
-      color: var(--eye);
+      background: transparent; color: var(--eye);
       border: 1px solid rgba(192,132,252,0.4);
     }
 
     .btn-secondary:hover {
-      background: rgba(123,47,255,0.15);
-      border-color: var(--eye);
+      background: rgba(123,47,255,0.15); border-color: var(--eye);
       box-shadow: 0 0 20px rgba(123,47,255,0.3);
       transform: translateY(-2px);
     }
 
     .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-top: 2rem;
-      padding: 0.4rem 1rem;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      margin-top: 2rem; padding: 0.4rem 1rem;
       border: 1px solid rgba(123,47,255,0.3);
-      border-radius: 20px;
-      font-size: 0.85rem;
-      color: var(--muted);
-      letter-spacing: 1px;
+      border-radius: 20px; font-size: 0.85rem;
+      color: var(--muted); letter-spacing: 1px;
       animation: fade-up 1s 0.8s ease both;
     }
 
     .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #4ade80;
-      box-shadow: 0 0 8px #4ade80;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #4ade80; box-shadow: 0 0 8px #4ade80;
       animation: blink-dot 2s ease-in-out infinite;
     }
 
-    @keyframes blink-dot {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-
-    @keyframes fade-up {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes blink-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    @keyframes fade-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
     /* ── DIVIDER ── */
     .divider {
-      width: 100%;
-      height: 1px;
+      width: 100%; height: 1px;
       background: linear-gradient(90deg, transparent, var(--glow), transparent);
-      margin: 0 auto;
-      opacity: 0.4;
+      margin: 0 auto; opacity: 0.4;
     }
 
-    /* ── COMMANDS ── */
-    #commands {
-      padding: 6rem 2rem;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
+    /* ── FEATURES ── */
+    #features { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
 
     .section-title {
       font-family: 'Cinzel Decorative', serif;
       font-size: clamp(1.5rem, 3vw, 2.2rem);
-      color: var(--eye);
-      text-align: center;
-      letter-spacing: 3px;
-      margin-bottom: 0.5rem;
+      color: var(--eye); text-align: center;
+      letter-spacing: 3px; margin-bottom: 0.5rem;
       text-shadow: 0 0 20px var(--glow);
     }
 
     .section-line {
-      width: 80px;
-      height: 2px;
+      width: 80px; height: 2px;
       background: linear-gradient(90deg, transparent, var(--glow), transparent);
       margin: 0.5rem auto 3rem;
-    }
-
-    .cmd-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.2rem;
-    }
-
-    .cmd-card {
-      background: rgba(13,2,40,0.7);
-      border: 1px solid rgba(123,47,255,0.2);
-      border-radius: 8px;
-      padding: 1.4rem 1.6rem;
-      transition: all 0.3s;
-      backdrop-filter: blur(8px);
-    }
-
-    .cmd-card:hover {
-      border-color: rgba(192,132,252,0.5);
-      background: rgba(123,47,255,0.1);
-      transform: translateY(-3px);
-      box-shadow: 0 8px 30px rgba(123,47,255,0.2);
-    }
-
-    .cmd-category {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--glow2);
-      margin-bottom: 0.6rem;
-    }
-
-    .cmd-name {
-      font-family: 'Cinzel Decorative', serif;
-      font-size: 1rem;
-      color: #fff;
-      margin-bottom: 0.4rem;
-    }
-
-    .cmd-name span {
-      color: var(--glow2);
-    }
-
-    .cmd-desc {
-      font-size: 0.9rem;
-      color: var(--muted);
-      line-height: 1.6;
-      font-weight: 300;
-    }
-
-    .cmd-aliases {
-      margin-top: 0.6rem;
-      font-size: 0.78rem;
-      color: rgba(139,109,176,0.7);
-      font-style: italic;
-    }
-
-    /* ── FEATURES ── */
-    #features {
-      padding: 6rem 2rem;
-      max-width: 1100px;
-      margin: 0 auto;
     }
 
     .feat-grid {
@@ -362,10 +292,8 @@
     .feat-card {
       background: rgba(7,1,26,0.8);
       border: 1px solid rgba(123,47,255,0.15);
-      border-radius: 8px;
-      padding: 2rem;
-      text-align: center;
-      transition: all 0.3s;
+      border-radius: 8px; padding: 2rem;
+      text-align: center; transition: all 0.3s;
     }
 
     .feat-card:hover {
@@ -373,75 +301,83 @@
       box-shadow: 0 0 30px rgba(123,47,255,0.15);
     }
 
-    .feat-icon {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      display: block;
-    }
+    .feat-icon { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
 
     .feat-title {
       font-family: 'Cinzel Decorative', serif;
-      font-size: 0.95rem;
-      color: var(--eye);
-      margin-bottom: 0.6rem;
-      letter-spacing: 1px;
+      font-size: 0.95rem; color: var(--eye);
+      margin-bottom: 0.6rem; letter-spacing: 1px;
     }
 
-    .feat-desc {
-      font-size: 0.9rem;
-      color: var(--muted);
-      line-height: 1.7;
-      font-weight: 300;
+    .feat-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.7; font-weight: 300; }
+
+    /* ── COMMANDS ── */
+    #commands { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
+
+    .cmd-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.2rem;
     }
 
-    /* ── PREFIX INFO ── */
+    .cmd-card {
+      background: rgba(13,2,40,0.7);
+      border: 1px solid rgba(123,47,255,0.2);
+      border-radius: 8px; padding: 1.4rem 1.6rem;
+      transition: all 0.3s; backdrop-filter: blur(8px);
+    }
+
+    .cmd-card:hover {
+      border-color: rgba(192,132,252,0.5);
+      background: rgba(123,47,255,0.1);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(123,47,255,0.2);
+    }
+
+    .cmd-category {
+      font-size: 0.7rem; text-transform: uppercase;
+      letter-spacing: 2px; color: var(--glow2); margin-bottom: 0.6rem;
+    }
+
+    .cmd-name {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1rem; color: #fff; margin-bottom: 0.4rem;
+    }
+
+    .cmd-name span { color: var(--glow2); }
+    .cmd-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.6; font-weight: 300; }
+    .cmd-aliases { margin-top: 0.6rem; font-size: 0.78rem; color: rgba(139,109,176,0.7); font-style: italic; }
+
+    /* ── PREFIX BOX ── */
     .prefix-box {
       background: rgba(123,47,255,0.08);
       border: 1px solid rgba(123,47,255,0.25);
-      border-radius: 8px;
-      padding: 1.5rem 2rem;
-      text-align: center;
-      max-width: 600px;
-      margin: 3rem auto 0;
+      border-radius: 8px; padding: 1.5rem 2rem;
+      text-align: center; max-width: 600px; margin: 3rem auto 0;
     }
 
-    .prefix-box p {
-      color: var(--muted);
-      font-size: 0.95rem;
-      line-height: 1.8;
-    }
+    .prefix-box p { color: var(--muted); font-size: 0.95rem; line-height: 1.8; }
 
     .prefix-box code {
       background: rgba(123,47,255,0.2);
-      padding: 0.2rem 0.6rem;
-      border-radius: 4px;
-      color: var(--eye);
-      font-family: monospace;
-      font-size: 0.95rem;
+      padding: 0.2rem 0.6rem; border-radius: 4px;
+      color: var(--eye); font-family: monospace; font-size: 0.95rem;
     }
 
     /* ── SUPPORT ── */
-    #support {
-      padding: 6rem 2rem;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
+    #support { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
 
     .support-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 3rem;
+      gap: 1.5rem; margin-bottom: 3rem;
     }
 
     .support-card {
       background: rgba(13,2,40,0.7);
       border: 1px solid rgba(123,47,255,0.2);
-      border-radius: 8px;
-      padding: 2rem;
-      transition: all 0.3s;
-      backdrop-filter: blur(8px);
-      text-align: center;
+      border-radius: 8px; padding: 2rem;
+      transition: all 0.3s; backdrop-filter: blur(8px); text-align: center;
     }
 
     .support-card:hover {
@@ -455,185 +391,104 @@
 
     .support-title {
       font-family: 'Cinzel Decorative', serif;
-      font-size: 1rem;
-      color: var(--eye);
-      margin-bottom: 0.6rem;
-      letter-spacing: 1px;
+      font-size: 1rem; color: var(--eye); margin-bottom: 0.6rem; letter-spacing: 1px;
     }
 
-    .support-desc {
-      font-size: 0.9rem;
-      color: var(--muted);
-      line-height: 1.7;
-      font-weight: 300;
-      margin-bottom: 1.2rem;
-    }
+    .support-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.7; font-weight: 300; margin-bottom: 1.2rem; }
 
     .support-btn {
-      display: inline-block;
-      padding: 0.6rem 1.5rem;
-      border-radius: 4px;
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 0.9rem;
-      font-weight: 600;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      text-decoration: none;
-      cursor: pointer;
-      transition: all 0.3s;
-      border: 1px solid rgba(192,132,252,0.4);
-      color: var(--eye);
-      background: transparent;
+      display: inline-block; padding: 0.6rem 1.5rem; border-radius: 4px;
+      font-family: 'Rajdhani', sans-serif; font-size: 0.9rem; font-weight: 600;
+      letter-spacing: 1px; text-transform: uppercase; text-decoration: none;
+      cursor: pointer; transition: all 0.3s;
+      border: 1px solid rgba(192,132,252,0.4); color: var(--eye); background: transparent;
     }
 
     .support-btn:hover {
-      background: rgba(123,47,255,0.2);
-      border-color: var(--eye);
+      background: rgba(123,47,255,0.2); border-color: var(--eye);
       box-shadow: 0 0 15px rgba(123,47,255,0.3);
     }
 
-    /* Report form */
     .report-form {
       background: rgba(13,2,40,0.7);
       border: 1px solid rgba(123,47,255,0.2);
-      border-radius: 8px;
-      padding: 2.5rem;
-      max-width: 700px;
-      margin: 0 auto;
-      backdrop-filter: blur(8px);
+      border-radius: 8px; padding: 2.5rem;
+      max-width: 700px; margin: 0 auto; backdrop-filter: blur(8px);
     }
 
     .report-form h3 {
-      font-family: 'Cinzel Decorative', serif;
-      font-size: 1.1rem;
-      color: var(--eye);
-      margin-bottom: 1.5rem;
-      letter-spacing: 2px;
-      text-align: center;
+      font-family: 'Cinzel Decorative', serif; font-size: 1.1rem;
+      color: var(--eye); margin-bottom: 1.5rem; letter-spacing: 2px; text-align: center;
     }
 
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-
     .form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
 
-    .form-group label {
-      font-size: 0.8rem;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
+    .form-group label { font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
 
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
+    .form-group input, .form-group select, .form-group textarea {
       background: rgba(123,47,255,0.08);
       border: 1px solid rgba(123,47,255,0.25);
-      border-radius: 4px;
-      padding: 0.7rem 1rem;
-      color: var(--text);
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 1rem;
-      transition: border-color 0.3s;
-      outline: none;
-      width: 100%;
+      border-radius: 4px; padding: 0.7rem 1rem;
+      color: var(--text); font-family: 'Rajdhani', sans-serif;
+      font-size: 1rem; transition: border-color 0.3s; outline: none; width: 100%;
     }
 
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      border-color: var(--glow);
-      box-shadow: 0 0 10px rgba(123,47,255,0.2);
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--glow); box-shadow: 0 0 10px rgba(123,47,255,0.2);
     }
 
     .form-group select option { background: #0d0228; }
-
     .form-group textarea { resize: vertical; min-height: 120px; }
 
     .form-submit {
-      width: 100%;
-      padding: 0.9rem;
+      width: 100%; padding: 0.9rem;
       background: linear-gradient(135deg, #7b2fff, #a855f7);
-      border: none;
-      border-radius: 4px;
-      color: #fff;
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 1rem;
-      font-weight: 600;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.3s;
-      margin-top: 0.5rem;
+      border: none; border-radius: 4px; color: #fff;
+      font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 600;
+      letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+      transition: all 0.3s; margin-top: 0.5rem;
     }
 
-    .form-submit:hover {
-      box-shadow: 0 0 20px rgba(123,47,255,0.6);
-      transform: translateY(-1px);
-    }
+    .form-submit:hover { box-shadow: 0 0 20px rgba(123,47,255,0.6); transform: translateY(-1px); }
 
     .form-success {
-      display: none;
-      text-align: center;
-      padding: 2rem;
-      color: #4ade80;
-      font-size: 1rem;
+      display: none; text-align: center; padding: 2rem;
+      color: #4ade80; font-size: 1rem;
     }
 
     .form-success .success-icon { font-size: 3rem; margin-bottom: 1rem; display: block; }
 
-    @media (max-width: 600px) {
-      .form-row { grid-template-columns: 1fr; }
-    }
-
     /* ── CTA ── */
-    #cta {
-      padding: 6rem 2rem;
-      text-align: center;
-    }
+    #cta { padding: 6rem 2rem; text-align: center; }
 
     .cta-title {
       font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(1.8rem, 4vw, 3rem);
-      color: #fff;
-      text-shadow: 0 0 30px var(--glow);
-      margin-bottom: 1rem;
+      font-size: clamp(1.8rem, 4vw, 3rem); color: #fff;
+      text-shadow: 0 0 30px var(--glow); margin-bottom: 1rem;
     }
 
-    .cta-sub {
-      color: var(--muted);
-      font-size: 1.05rem;
-      margin-bottom: 2.5rem;
-      font-weight: 300;
-    }
+    .cta-sub { color: var(--muted); font-size: 1.05rem; margin-bottom: 2.5rem; font-weight: 300; }
 
     /* ── FOOTER ── */
     footer {
       border-top: 1px solid rgba(123,47,255,0.15);
-      padding: 2rem 4rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
+      padding: 2rem 4rem; display: flex;
+      justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem;
     }
 
-    .footer-logo {
-      font-family: 'Cinzel Decorative', serif;
-      font-size: 0.9rem;
-      color: var(--muted);
-      letter-spacing: 2px;
-    }
-
-    .footer-text {
-      color: var(--muted);
-      font-size: 0.85rem;
-      opacity: 0.6;
-    }
+    .footer-logo { font-family: 'Cinzel Decorative', serif; font-size: 0.9rem; color: var(--muted); letter-spacing: 2px; }
+    .footer-text { color: var(--muted); font-size: 0.85rem; opacity: 0.6; }
 
     @media (max-width: 768px) {
       nav { padding: 1rem 1.5rem; }
       .nav-links { gap: 1.2rem; }
       footer { padding: 1.5rem; flex-direction: column; text-align: center; }
+    }
+
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -654,7 +509,17 @@
 
 <!-- HERO -->
 <section id="hero">
-  <div class="eye-orb"></div>
+  <!-- ── INTERACTIVE EYE ── -->
+  <div class="eye-container" id="eyeContainer">
+    <div class="eye-orb" id="eyeOrb">
+      <div class="eye-iris" id="eyeIris">
+        <div class="eye-pupil"></div>
+      </div>
+      <div class="eye-lid"></div>
+      <div class="eye-lid-bottom"></div>
+    </div>
+  </div>
+
   <h1 class="hero-title">Abyss Watcher</h1>
   <p class="hero-sub">Economy • Games • Utility</p>
   <p class="hero-desc">
@@ -686,17 +551,37 @@
     <div class="feat-card">
       <span class="feat-icon">🎰</span>
       <div class="feat-title">Games of Fate</div>
-      <p class="feat-desc">Test your luck with coinflip, slot machines, and more high-stakes games of chance.</p>
+      <p class="feat-desc">Test your luck with coinflip, slot machines, blackjack, and more high-stakes games of chance.</p>
     </div>
     <div class="feat-card">
       <span class="feat-icon">⚔️</span>
-      <div class="feat-title">Dual Commands</div>
-      <p class="feat-desc">Every command works as both a slash command and a prefix command for maximum flexibility.</p>
+      <div class="feat-title">Dual Rank System</div>
+      <p class="feat-desc">Climb both server and global ranks simultaneously. Every command earns XP toward your next rank.</p>
     </div>
     <div class="feat-card">
       <span class="feat-icon">🔮</span>
       <div class="feat-title">Daily Rewards</div>
       <p class="feat-desc">Claim your daily Shadow Essence and watch your vault grow over time.</p>
+    </div>
+    <div class="feat-card">
+      <span class="feat-icon">📖</span>
+      <div class="feat-title">Abyss Chronicles</div>
+      <p class="feat-desc">Progress through 10 chapters of dark lore. Complete challenges to unlock powerful rewards.</p>
+    </div>
+    <div class="feat-card">
+      <span class="feat-icon">🏆</span>
+      <div class="feat-title">Leaderboards</div>
+      <p class="feat-desc">Compete for the top spot in essence, XP, rank and commands used — both server and global.</p>
+    </div>
+    <div class="feat-card">
+      <span class="feat-icon">🃏</span>
+      <div class="feat-title">Blackjack</div>
+      <p class="feat-desc">Play a full interactive blackjack game with hit, stay, and natural blackjack bonuses.</p>
+    </div>
+    <div class="feat-card">
+      <span class="feat-icon">🌍</span>
+      <div class="feat-title">Global Economy</div>
+      <p class="feat-desc">Switch between server-only and global economy mode. Your balance travels with you across servers.</p>
     </div>
   </div>
 </section>
@@ -709,16 +594,17 @@
   <div class="section-line"></div>
 
   <div class="cmd-grid">
+    <!-- Economy -->
     <div class="cmd-card">
       <div class="cmd-category">Economy</div>
       <div class="cmd-name"><span>/</span>balance</div>
-      <p class="cmd-desc">Check your current Shadow Essence balance.</p>
+      <p class="cmd-desc">Check your current Shadow Essence balance in server or global mode.</p>
       <p class="cmd-aliases">Aliases: bal, b</p>
     </div>
     <div class="cmd-card">
       <div class="cmd-category">Economy</div>
       <div class="cmd-name"><span>/</span>daily</div>
-      <p class="cmd-desc">Claim your daily Shadow Essence reward. 24 hour cooldown.</p>
+      <p class="cmd-desc">Claim your daily Shadow Essence reward. 24 hour cooldown. Also earns XP.</p>
     </div>
     <div class="cmd-card">
       <div class="cmd-category">Economy</div>
@@ -727,23 +613,57 @@
       <p class="cmd-aliases">Aliases: g</p>
     </div>
     <div class="cmd-card">
+      <div class="cmd-category">Economy</div>
+      <div class="cmd-name"><span>/</span>leaderboard</div>
+      <p class="cmd-desc">View top players by essence, XP, rank or commands used. Toggle server or global.</p>
+      <p class="cmd-aliases">Aliases: lb, top</p>
+    </div>
+
+    <!-- Ranks -->
+    <div class="cmd-card">
+      <div class="cmd-category">Ranks</div>
+      <div class="cmd-name"><span>/</span>rank</div>
+      <p class="cmd-desc">View your server rank and global rank with XP progress bars for both simultaneously.</p>
+      <p class="cmd-aliases">Aliases: r</p>
+    </div>
+
+    <!-- Story -->
+    <div class="cmd-card">
+      <div class="cmd-category">Story</div>
+      <div class="cmd-name"><span>/</span>story</div>
+      <p class="cmd-desc">Read your current chapter of the Abyss Chronicles and track your challenge progress.</p>
+      <p class="cmd-aliases">Aliases: st &nbsp;|&nbsp; Actions: view, claim</p>
+    </div>
+
+    <!-- Games -->
+    <div class="cmd-card">
       <div class="cmd-category">Games</div>
       <div class="cmd-name"><span>/</span>coinflip</div>
-      <p class="cmd-desc">Bet your Shadow Essence on a coin flip. Choose head or tails.</p>
+      <p class="cmd-desc">Bet your Shadow Essence on a coin flip. Choose head or tails. Win 2x your bet.</p>
       <p class="cmd-aliases">Aliases: cf &nbsp;|&nbsp; Choices: h, t</p>
     </div>
     <div class="cmd-card">
       <div class="cmd-category">Games</div>
       <div class="cmd-name"><span>/</span>slots</div>
-      <p class="cmd-desc">Spin the slot machine with custom payout multipliers up to 50x.</p>
+      <p class="cmd-desc">Spin the slot machine with custom payout multipliers up to 50x on 7️⃣7️⃣7️⃣.</p>
       <p class="cmd-aliases">Aliases: sl</p>
     </div>
+    <div class="cmd-card">
+      <div class="cmd-category">Games</div>
+      <div class="cmd-name"><span>/</span>blackjack</div>
+      <p class="cmd-desc">Play interactive blackjack with hit/stay buttons. Natural blackjack pays 3x.</p>
+      <p class="cmd-aliases">Aliases: bj</p>
+    </div>
+
+    <!-- Fun -->
     <div class="cmd-card">
       <div class="cmd-category">Fun</div>
       <div class="cmd-name"><span>/</span>meme</div>
       <p class="cmd-desc">Get a random meme delivered from the depths of the internet.</p>
       <p class="cmd-aliases">Aliases: m</p>
     </div>
+
+    <!-- Utility -->
     <div class="cmd-card">
       <div class="cmd-category">Utility</div>
       <div class="cmd-name"><span>/</span>avatar</div>
@@ -759,12 +679,18 @@
       <div class="cmd-name"><span>/</span>stats</div>
       <p class="cmd-desc">View the bot's uptime, memory usage, and CPU load.</p>
     </div>
+    <div class="cmd-card">
+      <div class="cmd-category">Utility</div>
+      <div class="cmd-name"><span>/</span>help</div>
+      <p class="cmd-desc">View all commands organized by category with interactive buttons.</p>
+      <p class="cmd-aliases">Aliases: h</p>
+    </div>
   </div>
 
   <div class="prefix-box">
     <p>All commands support both slash <code>/command</code> and prefix syntax.<br/>
     Use <code>aw command</code> or <code>Aw command</code> for prefix commands.<br/>
-    Example: <code>aw cf 500 h</code> &nbsp;|&nbsp; <code>aw sl 1000</code> &nbsp;|&nbsp; <code>aw bal</code></p>
+    Example: <code>aw cf 500 h</code> &nbsp;|&nbsp; <code>aw sl 1000</code> &nbsp;|&nbsp; <code>aw bj 5000</code> &nbsp;|&nbsp; <code>aw lb</code></p>
   </div>
 </section>
 
@@ -855,28 +781,20 @@
   <div class="footer-text">🌑 Economy • Games • Utility</div>
 </footer>
 
-<!-- STARFIELD -->
 <script>
+  // ── STARFIELD ──
   const canvas = document.getElementById('canvas');
   const ctx = canvas.getContext('2d');
+  let stars = [], W, H;
 
-  let stars = [];
-  let W, H;
-
-  function resize() {
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-  }
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
 
   function initStars() {
     stars = [];
     for (let i = 0; i < 200; i++) {
       stars.push({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        r: Math.random() * 1.2 + 0.2,
-        alpha: Math.random(),
-        speed: Math.random() * 0.3 + 0.05,
+        x: Math.random() * W, y: Math.random() * H,
+        r: Math.random() * 1.2 + 0.2, alpha: Math.random(),
         flicker: Math.random() * 0.02 + 0.005,
         dir: Math.random() > 0.5 ? 1 : -1,
       });
@@ -894,7 +812,7 @@
       ctx.fill();
     });
 
-    // Floating purple orbs
+    // Floating orbs
     const t = Date.now() / 4000;
     const orbs = [
       { x: W * 0.2, y: H * 0.3, r: 200, c: 'rgba(123,47,255,0.04)' },
@@ -907,19 +825,64 @@
       const grad = ctx.createRadialGradient(ox, oy, 0, ox, oy, o.r);
       grad.addColorStop(0, o.c);
       grad.addColorStop(1, 'transparent');
-      ctx.beginPath();
-      ctx.arc(ox, oy, o.r, 0, Math.PI * 2);
-      ctx.fillStyle = grad;
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(ox, oy, o.r, 0, Math.PI * 2);
+      ctx.fillStyle = grad; ctx.fill();
     });
 
     requestAnimationFrame(draw);
   }
 
+  resize(); initStars(); draw();
+  window.addEventListener('resize', () => { resize(); initStars(); });
+
+  // ── EYE FOLLOWS CURSOR ──
+  const iris = document.getElementById('eyeIris');
+  const eyeOrb = document.getElementById('eyeOrb');
+
+  // Max distance the iris can move from center (in px)
+  const MAX_MOVE = 18;
+
+  document.addEventListener('mousemove', (e) => {
+    const rect = eyeOrb.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    // Angle from eye center to cursor
+    const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX);
+
+    // Distance capped at MAX_MOVE
+    const dist = Math.min(
+      Math.hypot(e.clientX - centerX, e.clientY - centerY) / 8,
+      MAX_MOVE
+    );
+
+    const moveX = Math.cos(angle) * dist;
+    const moveY = Math.sin(angle) * dist;
+
+    iris.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
+  });
+
+  // On mobile — move eye toward center of touch
+  document.addEventListener('touchmove', (e) => {
+    const touch = e.touches[0];
+    const rect = eyeOrb.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const angle = Math.atan2(touch.clientY - centerY, touch.clientX - centerX);
+    const dist = Math.min(Math.hypot(touch.clientX - centerX, touch.clientY - centerY) / 8, MAX_MOVE);
+    const moveX = Math.cos(angle) * dist;
+    const moveY = Math.sin(angle) * dist;
+    iris.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
+  });
+
+  // Reset eye when mouse leaves window
+  document.addEventListener('mouseleave', () => {
+    iris.style.transform = 'translate(-50%, -50%)';
+  });
+
+  // ── SUPPORT FORM ──
   function setType(type) {
-    setTimeout(() => {
-      document.getElementById('reportType').value = type;
-    }, 300);
+    setTimeout(() => { document.getElementById('reportType').value = type; }, 300);
   }
 
   async function submitReport() {
@@ -935,7 +898,7 @@
     btn.disabled = true;
 
     const data = {
-      username: username,
+      username,
       type: document.getElementById('reportType').value,
       command: document.getElementById('command').value,
       description: desc,
@@ -973,11 +936,6 @@
     document.getElementById('formContent').style.display = 'block';
     document.getElementById('formSuccess').style.display = 'none';
   }
-
-  resize();
-  initStars();
-  draw();
-  window.addEventListener('resize', () => { resize(); initStars(); });
 </script>
 
 </body>
