@@ -17,6 +17,7 @@
       --smoke: rgba(123,47,255,0.15);
       --text: #e8d5ff;
       --muted: #8b6db0;
+      --topgg: #ff3366;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,6 +32,8 @@
       cursor: default;
     }
 
+    /* cursor: default browser */
+
     /* ── CANVAS ── */
     #canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 
@@ -44,6 +47,28 @@
 
     section, nav, footer { position: relative; z-index: 2; }
 
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0; transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-left {
+      opacity: 0; transform: translateX(-40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal-left.visible { opacity: 1; transform: translateX(0); }
+    .reveal-right {
+      opacity: 0; transform: translateX(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal-right.visible { opacity: 1; transform: translateX(0); }
+    .reveal-scale {
+      opacity: 0; transform: scale(0.85);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal-scale.visible { opacity: 1; transform: scale(1); }
+
     /* ── NAV ── */
     nav {
       display: flex; justify-content: space-between; align-items: center;
@@ -52,13 +77,27 @@
       backdrop-filter: blur(10px);
       background: rgba(2,0,10,0.6);
       position: sticky; top: 0; z-index: 100;
+      transition: box-shadow 0.3s;
+    }
+    nav.scrolled {
+      box-shadow: 0 4px 30px rgba(123,47,255,0.15);
     }
 
     .nav-logo {
       font-family: 'Cinzel Decorative', serif;
       font-size: 1.1rem; color: var(--eye);
       letter-spacing: 2px; text-shadow: 0 0 20px var(--glow);
+      position: relative;
     }
+    .nav-logo::after {
+      content: '';
+      position: absolute; bottom: -3px; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--glow2), transparent);
+      transform: scaleX(0); transform-origin: center;
+      transition: transform 0.4s ease;
+    }
+    .nav-logo:hover::after { transform: scaleX(1); }
 
     .nav-links { display: flex; gap: 2.5rem; list-style: none; }
 
@@ -67,9 +106,17 @@
       font-size: 1rem; font-weight: 500;
       letter-spacing: 1px; text-transform: uppercase;
       transition: color 0.3s, text-shadow 0.3s;
+      position: relative;
     }
-
+    .nav-links a::after {
+      content: '';
+      position: absolute; bottom: -4px; left: 0; right: 0;
+      height: 1px; background: var(--glow2);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.3s ease;
+    }
     .nav-links a:hover { color: var(--eye); text-shadow: 0 0 12px var(--glow); }
+    .nav-links a:hover::after { transform: scaleX(1); }
 
     /* ── HERO ── */
     #hero {
@@ -78,109 +125,105 @@
       text-align: center; padding: 4rem 2rem;
     }
 
-    /* ── EYE ── */
+    /* ── HYPER-REALISTIC ABYSS EYE ── */
     .eye-container {
-      width: 160px; height: 160px;
-      margin-bottom: 2rem;
+      width: 280px; height: 280px;
+      margin-bottom: 2.5rem;
       position: relative;
+      flex-shrink: 0;
     }
 
-    .eye-orb {
-      width: 160px; height: 160px;
+    /* Atmospheric fog rings */
+    .eye-fog-ring {
+      position: absolute;
       border-radius: 50%;
-      background: radial-gradient(circle at 40% 40%, #1a0040, #0d0020);
-      box-shadow:
-        0 0 40px #7b2fff,
-        0 0 80px rgba(123,47,255,0.4),
-        0 0 120px rgba(123,47,255,0.2),
-        inset 0 0 40px rgba(0,0,0,0.8);
-      animation: pulse-orb 4s ease-in-out infinite;
-      position: relative;
-      overflow: hidden;
+      pointer-events: none;
+      animation: fog-breathe ease-in-out infinite;
+    }
+    .eye-fog-ring:nth-child(1) {
+      inset: -40px;
+      background: radial-gradient(ellipse at center,
+        transparent 55%,
+        rgba(90, 20, 200, 0.06) 70%,
+        rgba(50, 0, 120, 0.12) 85%,
+        transparent 100%
+      );
+      animation-duration: 5s;
+    }
+    .eye-fog-ring:nth-child(2) {
+      inset: -20px;
+      background: radial-gradient(ellipse at center,
+        transparent 50%,
+        rgba(30, 0, 80, 0.15) 75%,
+        rgba(100, 20, 220, 0.08) 90%,
+        transparent 100%
+      );
+      animation-duration: 7s;
+      animation-delay: -2s;
+    }
+    @keyframes fog-breathe {
+      0%, 100% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.08); opacity: 1; }
     }
 
-    /* Outer ring glow */
-    .eye-orb::after {
-      content: '';
-      position: absolute; inset: 6px;
+    /* The main canvas-rendered eye */
+    #eyeCanvas {
+      width: 280px; height: 280px;
       border-radius: 50%;
-      border: 2px solid rgba(192,132,252,0.25);
-      box-shadow: inset 0 0 20px rgba(123,47,255,0.3);
+      position: relative; z-index: 2;
+      filter: drop-shadow(0 0 30px rgba(123,47,255,0.7))
+              drop-shadow(0 0 70px rgba(123,47,255,0.35))
+              drop-shadow(0 0 120px rgba(90,20,200,0.2));
+      animation: eye-glow-pulse 4s ease-in-out infinite;
+    }
+    @keyframes eye-glow-pulse {
+      0%, 100% {
+        filter: drop-shadow(0 0 25px rgba(123,47,255,0.7))
+                drop-shadow(0 0 60px rgba(123,47,255,0.3))
+                drop-shadow(0 0 100px rgba(90,20,200,0.15));
+      }
+      50% {
+        filter: drop-shadow(0 0 40px rgba(168,85,247,0.9))
+                drop-shadow(0 0 90px rgba(168,85,247,0.5))
+                drop-shadow(0 0 150px rgba(123,47,255,0.25));
+      }
+    }
+
+    /* Abyss energy particles around eye */
+    .eye-particles {
+      position: absolute; inset: -60px; z-index: 1;
+      border-radius: 50%;
       pointer-events: none;
     }
-
-    /* Iris — moves with cursor */
-    .eye-iris {
+    .abyss-particle {
       position: absolute;
-      width: 76px; height: 76px;
       border-radius: 50%;
-      background: radial-gradient(circle at 40% 35%,
-        #9333ea, #5b21b6 40%, #2e1065 70%, #0d0020
+      background: radial-gradient(circle, rgba(180,80,255,0.9), transparent);
+      pointer-events: none;
+      animation: abyss-particle-orbit linear infinite;
+    }
+    @keyframes abyss-particle-orbit {
+      from { transform: rotate(var(--start)) translateX(var(--radius)) scale(var(--s)); opacity: var(--op); }
+      50%  { opacity: calc(var(--op) * 1.5); }
+      to   { transform: rotate(calc(var(--start) + 360deg)) translateX(var(--radius)) scale(var(--s)); opacity: var(--op); }
+    }
+
+    /* Smoke wisps */
+    .eye-smoke {
+      position: absolute; inset: -30px; z-index: 0;
+      border-radius: 50%; pointer-events: none;
+      background: radial-gradient(ellipse at center,
+        transparent 40%,
+        rgba(40, 0, 100, 0.25) 65%,
+        rgba(20, 0, 60, 0.4) 80%,
+        rgba(2, 0, 10, 0.8) 100%
       );
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      transition: transform 0.06s ease-out;
-      box-shadow: 0 0 15px rgba(147,51,234,0.6);
+      animation: smoke-swirl 12s linear infinite;
     }
-
-    /* Pupil */
-    .eye-pupil {
-      position: absolute;
-      width: 30px; height: 30px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #1a0040, #000);
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 0 8px rgba(0,0,0,0.9);
-    }
-
-    /* Pupil shine */
-    .eye-pupil::before {
-      content: '';
-      position: absolute;
-      width: 9px; height: 9px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.85);
-      top: 5px; left: 5px;
-    }
-
-    /* Eyelid blink top */
-    .eye-lid {
-      position: absolute;
-      top: 0; left: 0; right: 0; height: 50%;
-      background: #02000a;
-      border-radius: 160px 160px 0 0;
-      transform-origin: top center;
-      transform: scaleY(0);
-      animation: eye-blink 7s ease-in-out infinite;
-      z-index: 10;
-    }
-
-    /* Eyelid blink bottom */
-    .eye-lid-bottom {
-      position: absolute;
-      bottom: 0; left: 0; right: 0; height: 50%;
-      background: #02000a;
-      border-radius: 0 0 160px 160px;
-      transform-origin: bottom center;
-      transform: scaleY(0);
-      animation: eye-blink-bottom 7s ease-in-out infinite;
-      z-index: 10;
-    }
-
-    @keyframes pulse-orb {
-      0%, 100% { box-shadow: 0 0 40px #7b2fff, 0 0 80px rgba(123,47,255,0.4), 0 0 120px rgba(123,47,255,0.2), inset 0 0 40px rgba(0,0,0,0.8); }
-      50% { box-shadow: 0 0 60px #a855f7, 0 0 120px rgba(168,85,247,0.5), 0 0 180px rgba(168,85,247,0.25), inset 0 0 40px rgba(0,0,0,0.8); }
-    }
-
-    @keyframes eye-blink {
-      0%, 44%, 56%, 100% { transform: scaleY(0); }
-      50% { transform: scaleY(1); }
-    }
-
-    @keyframes eye-blink-bottom {
-      0%, 44%, 56%, 100% { transform: scaleY(0); }
-      50% { transform: scaleY(1); }
+    @keyframes smoke-swirl {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.05); }
+      100% { transform: rotate(360deg) scale(1); }
     }
 
     .hero-title {
@@ -218,28 +261,50 @@
       letter-spacing: 2px; text-transform: uppercase;
       text-decoration: none; cursor: pointer;
       transition: all 0.3s; border: none;
+      position: relative; overflow: hidden;
     }
+    .btn::before {
+      content: '';
+      position: absolute; top: 50%; left: 50%;
+      width: 0; height: 0;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      transform: translate(-50%,-50%);
+      transition: width 0.5s ease, height 0.5s ease;
+    }
+    .btn:hover::before { width: 300px; height: 300px; }
 
     .btn-primary {
       background: linear-gradient(135deg, #7b2fff, #a855f7);
       color: #fff; box-shadow: 0 0 20px rgba(123,47,255,0.5);
     }
-
     .btn-primary:hover {
       box-shadow: 0 0 40px rgba(123,47,255,0.8), 0 0 80px rgba(123,47,255,0.3);
-      transform: translateY(-2px);
+      transform: translateY(-3px);
     }
 
     .btn-secondary {
       background: transparent; color: var(--eye);
       border: 1px solid rgba(192,132,252,0.4);
     }
-
     .btn-secondary:hover {
       background: rgba(123,47,255,0.15); border-color: var(--eye);
       box-shadow: 0 0 20px rgba(123,47,255,0.3);
-      transform: translateY(-2px);
+      transform: translateY(-3px);
     }
+
+    /* ── TOP.GG BUTTON ── */
+    .btn-topgg {
+      background: linear-gradient(135deg, #c0392b, var(--topgg));
+      color: #fff;
+      box-shadow: 0 0 18px rgba(255,51,102,0.4);
+      display: inline-flex; align-items: center; gap: 0.5rem;
+    }
+    .btn-topgg:hover {
+      box-shadow: 0 0 36px rgba(255,51,102,0.7), 0 0 70px rgba(255,51,102,0.25);
+      transform: translateY(-3px);
+    }
+    .topgg-icon { font-size: 1.1rem; }
 
     .status-badge {
       display: inline-flex; align-items: center; gap: 0.5rem;
@@ -248,6 +313,11 @@
       border-radius: 20px; font-size: 0.85rem;
       color: var(--muted); letter-spacing: 1px;
       animation: fade-up 1s 0.8s ease both;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .status-badge:hover {
+      border-color: rgba(74,222,128,0.5);
+      box-shadow: 0 0 15px rgba(74,222,128,0.15);
     }
 
     .status-dot {
@@ -293,22 +363,45 @@
       background: rgba(7,1,26,0.8);
       border: 1px solid rgba(123,47,255,0.15);
       border-radius: 8px; padding: 2rem;
-      text-align: center; transition: all 0.3s;
+      text-align: center;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative; overflow: hidden;
+      cursor: default;
     }
-
+    .feat-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(123,47,255,0.12), transparent 60%);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .feat-card:hover::before { opacity: 1; }
+    .feat-card::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--glow2), transparent);
+      transform: scaleX(0); transform-origin: center;
+      transition: transform 0.4s ease;
+    }
+    .feat-card:hover::after { transform: scaleX(1); }
     .feat-card:hover {
       border-color: rgba(192,132,252,0.4);
-      box-shadow: 0 0 30px rgba(123,47,255,0.15);
+      box-shadow: 0 0 40px rgba(123,47,255,0.2), 0 20px 40px rgba(0,0,0,0.3);
+      transform: translateY(-6px) scale(1.02);
     }
 
-    .feat-icon { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+    .feat-icon {
+      font-size: 2.5rem; margin-bottom: 1rem; display: block;
+      transition: transform 0.3s;
+      filter: drop-shadow(0 0 6px rgba(123,47,255,0.4));
+    }
+    .feat-card:hover .feat-icon { transform: scale(1.2) rotate(5deg); }
 
     .feat-title {
       font-family: 'Cinzel Decorative', serif;
       font-size: 0.95rem; color: var(--eye);
       margin-bottom: 0.6rem; letter-spacing: 1px;
     }
-
     .feat-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.7; font-weight: 300; }
 
     /* ── COMMANDS ── */
@@ -324,26 +417,44 @@
       background: rgba(13,2,40,0.7);
       border: 1px solid rgba(123,47,255,0.2);
       border-radius: 8px; padding: 1.4rem 1.6rem;
-      transition: all 0.3s; backdrop-filter: blur(8px);
+      transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      backdrop-filter: blur(8px);
+      position: relative; overflow: hidden;
+      cursor: default;
     }
-
+    .cmd-card::before {
+      content: '';
+      position: absolute; top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(123,47,255,0.05), transparent);
+      transition: left 0.5s ease;
+    }
+    .cmd-card:hover::before { left: 100%; }
     .cmd-card:hover {
       border-color: rgba(192,132,252,0.5);
       background: rgba(123,47,255,0.1);
-      transform: translateY(-3px);
-      box-shadow: 0 8px 30px rgba(123,47,255,0.2);
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 10px 40px rgba(123,47,255,0.25), 0 0 0 1px rgba(192,132,252,0.1);
     }
 
     .cmd-category {
       font-size: 0.7rem; text-transform: uppercase;
       letter-spacing: 2px; color: var(--glow2); margin-bottom: 0.6rem;
+      display: inline-flex; align-items: center; gap: 0.3rem;
+    }
+    .cmd-category::before {
+      content: '';
+      width: 4px; height: 4px; border-radius: 50%;
+      background: var(--glow2);
+      box-shadow: 0 0 6px var(--glow2);
     }
 
     .cmd-name {
       font-family: 'Cinzel Decorative', serif;
       font-size: 1rem; color: #fff; margin-bottom: 0.4rem;
+      transition: color 0.3s;
     }
-
+    .cmd-card:hover .cmd-name { color: var(--eye); }
     .cmd-name span { color: var(--glow2); }
     .cmd-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.6; font-weight: 300; }
     .cmd-aliases { margin-top: 0.6rem; font-size: 0.78rem; color: rgba(139,109,176,0.7); font-style: italic; }
@@ -354,15 +465,28 @@
       border: 1px solid rgba(123,47,255,0.25);
       border-radius: 8px; padding: 1.5rem 2rem;
       text-align: center; max-width: 600px; margin: 3rem auto 0;
+      transition: all 0.3s;
+      position: relative; overflow: hidden;
     }
-
+    .prefix-box::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--glow2), transparent);
+    }
+    .prefix-box:hover {
+      border-color: rgba(192,132,252,0.4);
+      box-shadow: 0 0 25px rgba(123,47,255,0.15);
+      background: rgba(123,47,255,0.12);
+    }
     .prefix-box p { color: var(--muted); font-size: 0.95rem; line-height: 1.8; }
-
     .prefix-box code {
       background: rgba(123,47,255,0.2);
       padding: 0.2rem 0.6rem; border-radius: 4px;
       color: var(--eye); font-family: monospace; font-size: 0.95rem;
+      transition: background 0.2s;
     }
+    .prefix-box code:hover { background: rgba(123,47,255,0.35); }
 
     /* ── SUPPORT ── */
     #support { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
@@ -377,23 +501,36 @@
       background: rgba(13,2,40,0.7);
       border: 1px solid rgba(123,47,255,0.2);
       border-radius: 8px; padding: 2rem;
-      transition: all 0.3s; backdrop-filter: blur(8px); text-align: center;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      backdrop-filter: blur(8px); text-align: center;
+      position: relative; overflow: hidden;
     }
-
+    .support-card::after {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 8px;
+      background: radial-gradient(circle at 50% 0%, rgba(123,47,255,0.1), transparent 70%);
+      opacity: 0; transition: opacity 0.4s;
+    }
+    .support-card:hover::after { opacity: 1; }
     .support-card:hover {
       border-color: rgba(192,132,252,0.5);
       background: rgba(123,47,255,0.1);
-      transform: translateY(-3px);
-      box-shadow: 0 8px 30px rgba(123,47,255,0.2);
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 12px 40px rgba(123,47,255,0.25);
     }
 
-    .support-icon { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+    .support-icon {
+      font-size: 2.5rem; margin-bottom: 1rem; display: block;
+      transition: transform 0.4s;
+      filter: drop-shadow(0 0 8px rgba(123,47,255,0.5));
+    }
+    .support-card:hover .support-icon { transform: scale(1.25) rotate(-5deg); }
 
     .support-title {
       font-family: 'Cinzel Decorative', serif;
       font-size: 1rem; color: var(--eye); margin-bottom: 0.6rem; letter-spacing: 1px;
     }
-
     .support-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.7; font-weight: 300; margin-bottom: 1.2rem; }
 
     .support-btn {
@@ -402,18 +539,73 @@
       letter-spacing: 1px; text-transform: uppercase; text-decoration: none;
       cursor: pointer; transition: all 0.3s;
       border: 1px solid rgba(192,132,252,0.4); color: var(--eye); background: transparent;
+      position: relative; overflow: hidden;
     }
-
+    .support-btn::before {
+      content: '';
+      position: absolute; top: 50%; left: 50%;
+      width: 0; height: 0;
+      background: rgba(123,47,255,0.3);
+      border-radius: 50%;
+      transform: translate(-50%,-50%);
+      transition: width 0.4s ease, height 0.4s ease;
+    }
+    .support-btn:hover::before { width: 200px; height: 200px; }
     .support-btn:hover {
       background: rgba(123,47,255,0.2); border-color: var(--eye);
-      box-shadow: 0 0 15px rgba(123,47,255,0.3);
+      box-shadow: 0 0 20px rgba(123,47,255,0.4);
+      transform: translateY(-2px);
     }
 
-    .report-form {
-      background: rgba(13,2,40,0.7);
-      border: 1px solid rgba(123,47,255,0.2);
-      border-radius: 8px; padding: 2.5rem;
-      max-width: 700px; margin: 0 auto; backdrop-filter: blur(8px);
+    /* ── MODAL OVERLAY ── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(2,0,10,0.85);
+      backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+    .report-modal {
+      background: rgba(13,2,40,0.95);
+      border: 1px solid rgba(123,47,255,0.3);
+      border-radius: 12px; padding: 2.5rem;
+      max-width: 680px; width: 90%;
+      max-height: 90vh; overflow-y: auto;
+      backdrop-filter: blur(16px);
+      position: relative;
+      transform: scale(0.9) translateY(20px);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 0 60px rgba(123,47,255,0.2), 0 0 120px rgba(123,47,255,0.08);
+    }
+    .modal-overlay.open .report-modal {
+      transform: scale(1) translateY(0);
+    }
+    .report-modal::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--glow), var(--glow2), transparent);
+      border-radius: 12px 12px 0 0;
+    }
+
+    .modal-close {
+      position: absolute; top: 1.2rem; right: 1.2rem;
+      width: 32px; height: 32px;
+      background: rgba(123,47,255,0.15);
+      border: 1px solid rgba(192,132,252,0.2);
+      border-radius: 50%; color: var(--eye);
+      font-size: 1.1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s;
+    }
+    .modal-close:hover {
+      background: rgba(123,47,255,0.35);
+      border-color: var(--eye);
+      transform: rotate(90deg);
+      box-shadow: 0 0 12px rgba(123,47,255,0.4);
     }
 
     .report-form h3 {
@@ -423,21 +615,22 @@
 
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
     .form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
-
-    .form-group label { font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+    .form-group label {
+      font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted);
+      transition: color 0.3s;
+    }
+    .form-group:focus-within label { color: var(--eye); }
 
     .form-group input, .form-group select, .form-group textarea {
       background: rgba(123,47,255,0.08);
       border: 1px solid rgba(123,47,255,0.25);
       border-radius: 4px; padding: 0.7rem 1rem;
       color: var(--text); font-family: 'Rajdhani', sans-serif;
-      font-size: 1rem; transition: border-color 0.3s; outline: none; width: 100%;
+      font-size: 1rem; transition: border-color 0.3s, box-shadow 0.3s; outline: none; width: 100%;
     }
-
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-      border-color: var(--glow); box-shadow: 0 0 10px rgba(123,47,255,0.2);
+      border-color: var(--glow); box-shadow: 0 0 15px rgba(123,47,255,0.25);
     }
-
     .form-group select option { background: #0d0228; }
     .form-group textarea { resize: vertical; min-height: 120px; }
 
@@ -448,56 +641,135 @@
       font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 600;
       letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
       transition: all 0.3s; margin-top: 0.5rem;
+      position: relative; overflow: hidden;
     }
-
-    .form-submit:hover { box-shadow: 0 0 20px rgba(123,47,255,0.6); transform: translateY(-1px); }
+    .form-submit::after {
+      content: '';
+      position: absolute; top: 50%; left: 50%;
+      width: 0; height: 0; background: rgba(255,255,255,0.15);
+      border-radius: 50%; transform: translate(-50%,-50%);
+      transition: width 0.5s, height 0.5s;
+    }
+    .form-submit:hover::after { width: 400px; height: 400px; }
+    .form-submit:hover { box-shadow: 0 0 25px rgba(123,47,255,0.7); transform: translateY(-1px); }
 
     .form-success {
       display: none; text-align: center; padding: 2rem;
       color: #4ade80; font-size: 1rem;
     }
-
-    .form-success .success-icon { font-size: 3rem; margin-bottom: 1rem; display: block; }
+    .form-success .success-icon {
+      font-size: 3rem; margin-bottom: 1rem; display: block;
+      animation: bounce-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    }
+    @keyframes bounce-in {
+      from { transform: scale(0); }
+      to { transform: scale(1); }
+    }
 
     /* ── CTA ── */
-    #cta { padding: 6rem 2rem; text-align: center; }
+    #cta {
+      padding: 6rem 2rem; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    #cta::before {
+      content: '';
+      position: absolute; top: 50%; left: 50%;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(123,47,255,0.07), transparent 70%);
+      transform: translate(-50%,-50%);
+      animation: cta-pulse 4s ease-in-out infinite;
+    }
+    @keyframes cta-pulse {
+      0%, 100% { transform: translate(-50%,-50%) scale(1); }
+      50% { transform: translate(-50%,-50%) scale(1.15); }
+    }
 
     .cta-title {
       font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(1.8rem, 4vw, 3rem); color: #fff;
-      text-shadow: 0 0 30px var(--glow); margin-bottom: 1rem;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      color: #fff; letter-spacing: 3px;
+      text-shadow: 0 0 30px var(--glow);
+      position: relative;
     }
-
-    .cta-sub { color: var(--muted); font-size: 1.05rem; margin-bottom: 2.5rem; font-weight: 300; }
+    .cta-sub {
+      margin-top: 1rem; color: var(--muted);
+      font-size: 1.1rem; letter-spacing: 1px;
+      position: relative;
+    }
 
     /* ── FOOTER ── */
     footer {
+      padding: 2rem 4rem;
       border-top: 1px solid rgba(123,47,255,0.15);
-      padding: 2rem 4rem; display: flex;
-      justify-content: space-between; align-items: center;
-      flex-wrap: wrap; gap: 1rem;
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(2,0,10,0.4);
     }
-
-    .footer-logo { font-family: 'Cinzel Decorative', serif; font-size: 0.9rem; color: var(--muted); letter-spacing: 2px; }
+    .footer-logo {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1rem; color: var(--eye);
+      letter-spacing: 2px; opacity: 0.7;
+    }
     .footer-text { color: var(--muted); font-size: 0.85rem; opacity: 0.6; }
 
     @media (max-width: 768px) {
       nav { padding: 1rem 1.5rem; }
       .nav-links { gap: 1.2rem; }
-      footer { padding: 1.5rem; flex-direction: column; text-align: center; }
+      footer { padding: 1.5rem; flex-direction: column; text-align: center; gap: 0.5rem; }
     }
-
     @media (max-width: 600px) {
       .form-row { grid-template-columns: 1fr; }
+    }
+
+    /* ── FLOATING RUNES ── */
+    .rune {
+      position: fixed;
+      font-size: clamp(14px, 2vw, 22px);
+      color: rgba(123,47,255,0.15);
+      pointer-events: none; z-index: 1;
+      animation: rune-float linear infinite;
+      user-select: none;
+    }
+    @keyframes rune-float {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 0.5; }
+      100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* ── TILT EFFECT ── */
+    .tilt { transform-style: preserve-3d; }
+
+    /* ── COUNTER ANIMATION ── */
+    .stat-number {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 2rem; color: var(--eye);
+      text-shadow: 0 0 20px var(--glow);
+    }
+
+    /* ── SHIMMER LINE ── */
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    .section-line-animated {
+      width: 120px; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--glow2), var(--eye), var(--glow2), transparent);
+      background-size: 200% auto;
+      margin: 0.5rem auto 3rem;
+      animation: shimmer 3s linear infinite;
     }
   </style>
 </head>
 <body>
 
+<!-- Floating Runes -->
+<div id="runes"></div>
+
 <canvas id="canvas"></canvas>
 
 <!-- NAV -->
-<nav>
+<nav id="navbar">
   <div class="nav-logo">Abyss Watcher</div>
   <ul class="nav-links">
     <li><a href="#commands">Commands</a></li>
@@ -509,15 +781,12 @@
 
 <!-- HERO -->
 <section id="hero">
-  <!-- ── INTERACTIVE EYE ── -->
   <div class="eye-container" id="eyeContainer">
-    <div class="eye-orb" id="eyeOrb">
-      <div class="eye-iris" id="eyeIris">
-        <div class="eye-pupil"></div>
-      </div>
-      <div class="eye-lid"></div>
-      <div class="eye-lid-bottom"></div>
-    </div>
+    <div class="eye-smoke"></div>
+    <div class="eye-fog-ring"></div>
+    <div class="eye-fog-ring"></div>
+    <div class="eye-particles" id="eyeParticles"></div>
+    <canvas id="eyeCanvas" width="280" height="280"></canvas>
   </div>
 
   <h1 class="hero-title">Abyss Watcher</h1>
@@ -529,6 +798,9 @@
   <div class="hero-buttons">
     <a href="https://discord.com/oauth2/authorize?client_id=1500488671055450243&permissions=2147830848&integration_type=0&scope=bot" class="btn btn-primary" target="_blank">+ Invite Bot</a>
     <a href="#commands" class="btn btn-secondary">View Commands</a>
+    <a href="https://top.gg/bot/1500488671055450243" class="btn btn-topgg" target="_blank">
+      <span class="topgg-icon">▲</span> Vote on Top.gg
+    </a>
   </div>
   <div class="status-badge">
     <span class="status-dot"></span>
@@ -540,45 +812,45 @@
 
 <!-- FEATURES -->
 <section id="features">
-  <h2 class="section-title">What Awaits You</h2>
-  <div class="section-line"></div>
+  <h2 class="section-title reveal">What Awaits You</h2>
+  <div class="section-line-animated"></div>
   <div class="feat-grid">
-    <div class="feat-card">
+    <div class="feat-card reveal tilt" style="transition-delay:0.05s">
       <span class="feat-icon">🌑</span>
       <div class="feat-title">Shadow Economy</div>
       <p class="feat-desc">Earn, spend, and trade Shadow Essence across servers with a powerful global economy system.</p>
     </div>
-    <div class="feat-card">
+    <div class="feat-card reveal tilt" style="transition-delay:0.1s">
       <span class="feat-icon">🎰</span>
       <div class="feat-title">Games of Fate</div>
       <p class="feat-desc">Test your luck with coinflip, slot machines, blackjack, and more high-stakes games of chance.</p>
     </div>
-    <div class="feat-card">
+    <div class="feat-card reveal tilt" style="transition-delay:0.15s">
       <span class="feat-icon">⚔️</span>
       <div class="feat-title">Dual Rank System</div>
       <p class="feat-desc">Climb both server and global ranks simultaneously. Every command earns XP toward your next rank.</p>
     </div>
-    <div class="feat-card">
+    <div class="feat-card reveal tilt" style="transition-delay:0.2s">
       <span class="feat-icon">🔮</span>
       <div class="feat-title">Daily Rewards</div>
       <p class="feat-desc">Claim your daily Shadow Essence and watch your vault grow over time.</p>
     </div>
-    <div class="feat-card">
+    <div class="feat-card reveal tilt" style="transition-delay:0.25s">
       <span class="feat-icon">📖</span>
       <div class="feat-title">Abyss Chronicles</div>
       <p class="feat-desc">Progress through 10 chapters of dark lore. Complete challenges to unlock powerful rewards.</p>
     </div>
-    <div class="feat-card">
+    <div class="feat-card reveal tilt" style="transition-delay:0.3s">
       <span class="feat-icon">🏆</span>
       <div class="feat-title">Leaderboards</div>
       <p class="feat-desc">Compete for the top spot in essence, XP, rank and commands used — both server and global.</p>
     </div>
-    <div class="feat-card">
+    <div class="feat-card reveal tilt" style="transition-delay:0.35s">
       <span class="feat-icon">🃏</span>
       <div class="feat-title">Blackjack</div>
       <p class="feat-desc">Play a full interactive blackjack game with hit, stay, and natural blackjack bonuses.</p>
     </div>
-    <div class="feat-card">
+    <div class="feat-card reveal tilt" style="transition-delay:0.4s">
       <span class="feat-icon">🌍</span>
       <div class="feat-title">Global Economy</div>
       <p class="feat-desc">Switch between server-only and global economy mode. Your balance travels with you across servers.</p>
@@ -590,96 +862,85 @@
 
 <!-- COMMANDS -->
 <section id="commands">
-  <h2 class="section-title">Commands</h2>
-  <div class="section-line"></div>
+  <h2 class="section-title reveal">Commands</h2>
+  <div class="section-line-animated"></div>
 
   <div class="cmd-grid">
-    <!-- Economy -->
-    <div class="cmd-card">
+    <div class="cmd-card reveal" style="transition-delay:0.05s">
       <div class="cmd-category">Economy</div>
       <div class="cmd-name"><span>/</span>balance</div>
       <p class="cmd-desc">Check your current Shadow Essence balance in server or global mode.</p>
       <p class="cmd-aliases">Aliases: bal, b</p>
     </div>
-    <div class="cmd-card">
+    <div class="cmd-card reveal" style="transition-delay:0.1s">
       <div class="cmd-category">Economy</div>
       <div class="cmd-name"><span>/</span>daily</div>
       <p class="cmd-desc">Claim your daily Shadow Essence reward. 24 hour cooldown. Also earns XP.</p>
     </div>
-    <div class="cmd-card">
+    <div class="cmd-card reveal" style="transition-delay:0.15s">
       <div class="cmd-category">Economy</div>
       <div class="cmd-name"><span>/</span>give</div>
       <p class="cmd-desc">Send Shadow Essence to another user with a confirmation system.</p>
       <p class="cmd-aliases">Aliases: g</p>
     </div>
-    <div class="cmd-card">
+    <div class="cmd-card reveal" style="transition-delay:0.2s">
       <div class="cmd-category">Economy</div>
       <div class="cmd-name"><span>/</span>leaderboard</div>
       <p class="cmd-desc">View top players by essence, XP, rank or commands used. Toggle server or global.</p>
       <p class="cmd-aliases">Aliases: lb, top</p>
     </div>
-
-    <!-- Ranks -->
-    <div class="cmd-card">
+    <div class="cmd-card reveal" style="transition-delay:0.25s">
       <div class="cmd-category">Ranks</div>
       <div class="cmd-name"><span>/</span>rank</div>
       <p class="cmd-desc">View your server rank and global rank with XP progress bars for both simultaneously.</p>
       <p class="cmd-aliases">Aliases: r</p>
     </div>
-
-    <!-- Story -->
-    <div class="cmd-card">
+    <div class="cmd-card reveal" style="transition-delay:0.3s">
       <div class="cmd-category">Story</div>
       <div class="cmd-name"><span>/</span>story</div>
       <p class="cmd-desc">Read your current chapter of the Abyss Chronicles and track your challenge progress.</p>
       <p class="cmd-aliases">Aliases: st &nbsp;|&nbsp; Actions: view, claim</p>
     </div>
-
-    <!-- Games -->
-    <div class="cmd-card">
+    <div class="cmd-card reveal" style="transition-delay:0.35s">
       <div class="cmd-category">Games</div>
       <div class="cmd-name"><span>/</span>coinflip</div>
       <p class="cmd-desc">Bet your Shadow Essence on a coin flip. Choose head or tails. Win 2x your bet.</p>
       <p class="cmd-aliases">Aliases: cf &nbsp;|&nbsp; Choices: h, t</p>
     </div>
-    <div class="cmd-card">
+    <div class="cmd-card reveal" style="transition-delay:0.4s">
       <div class="cmd-category">Games</div>
       <div class="cmd-name"><span>/</span>slots</div>
       <p class="cmd-desc">Spin the slot machine with custom payout multipliers up to 50x on 7️⃣7️⃣7️⃣.</p>
       <p class="cmd-aliases">Aliases: sl</p>
     </div>
-    <div class="cmd-card">
+    <div class="cmd-card reveal" style="transition-delay:0.45s">
       <div class="cmd-category">Games</div>
       <div class="cmd-name"><span>/</span>blackjack</div>
       <p class="cmd-desc">Play interactive blackjack with hit/stay buttons. Natural blackjack pays 3x.</p>
       <p class="cmd-aliases">Aliases: bj</p>
     </div>
-
-    <!-- Fun -->
-    <div class="cmd-card">
+    <div class="cmd-card reveal" style="transition-delay:0.5s">
       <div class="cmd-category">Fun</div>
       <div class="cmd-name"><span>/</span>meme</div>
       <p class="cmd-desc">Get a random meme delivered from the depths of the internet.</p>
       <p class="cmd-aliases">Aliases: m</p>
     </div>
-
-    <!-- Utility -->
-    <div class="cmd-card">
+    <div class="cmd-card reveal" style="transition-delay:0.55s">
       <div class="cmd-category">Utility</div>
       <div class="cmd-name"><span>/</span>avatar</div>
       <p class="cmd-desc">Display the avatar of any user in full resolution.</p>
     </div>
-    <div class="cmd-card">
+    <div class="cmd-card reveal" style="transition-delay:0.6s">
       <div class="cmd-category">Utility</div>
       <div class="cmd-name"><span>/</span>ping</div>
       <p class="cmd-desc">Check the bot's response latency in milliseconds.</p>
     </div>
-    <div class="cmd-card">
+    <div class="cmd-card reveal" style="transition-delay:0.65s">
       <div class="cmd-category">Utility</div>
       <div class="cmd-name"><span>/</span>stats</div>
       <p class="cmd-desc">View the bot's uptime, memory usage, and CPU load.</p>
     </div>
-    <div class="cmd-card">
+    <div class="cmd-card reveal" style="transition-delay:0.7s">
       <div class="cmd-category">Utility</div>
       <div class="cmd-name"><span>/</span>help</div>
       <p class="cmd-desc">View all commands organized by category with interactive buttons.</p>
@@ -687,7 +948,7 @@
     </div>
   </div>
 
-  <div class="prefix-box">
+  <div class="prefix-box reveal">
     <p>All commands support both slash <code>/command</code> and prefix syntax.<br/>
     Use <code>aw command</code> or <code>Aw command</code> for prefix commands.<br/>
     Example: <code>aw cf 500 h</code> &nbsp;|&nbsp; <code>aw sl 1000</code> &nbsp;|&nbsp; <code>aw bj 5000</code> &nbsp;|&nbsp; <code>aw lb</code></p>
@@ -698,32 +959,35 @@
 
 <!-- SUPPORT -->
 <section id="support">
-  <h2 class="section-title">Support</h2>
-  <div class="section-line"></div>
+  <h2 class="section-title reveal">Support</h2>
+  <div class="section-line-animated"></div>
 
   <div class="support-grid">
-    <div class="support-card">
+    <div class="support-card reveal" style="transition-delay:0.05s">
       <span class="support-icon">🐛</span>
       <div class="support-title">Bug Report</div>
-      <p class="support-desc">Found something broken? Report it below and we'll fix it as soon as possible.</p>
-      <a href="#report-form" class="support-btn" onclick="setType('Bug Report')">Report Bug</a>
+      <p class="support-desc">Found something broken? Report it and we'll fix it as soon as possible.</p>
+      <button class="support-btn" onclick="openModal('Bug Report')">Report Bug</button>
     </div>
-    <div class="support-card">
+    <div class="support-card reveal" style="transition-delay:0.1s">
       <span class="support-icon">💡</span>
       <div class="support-title">Feature Request</div>
       <p class="support-desc">Have an idea for a new command or feature? We'd love to hear it.</p>
-      <a href="#report-form" class="support-btn" onclick="setType('Feature Request')">Suggest Feature</a>
+      <button class="support-btn" onclick="openModal('Feature Request')">Suggest Feature</button>
     </div>
-    <div class="support-card">
+    <div class="support-card reveal" style="transition-delay:0.15s">
       <span class="support-icon">💬</span>
       <div class="support-title">Discord Server</div>
       <p class="support-desc">Join our support server for real-time help, updates, and community discussion.</p>
       <a href="https://discord.gg/Vu9SpNaV9x" class="support-btn" target="_blank">Join Server</a>
     </div>
   </div>
+</section>
 
-  <!-- REPORT FORM -->
-  <div class="report-form" id="report-form">
+<!-- REPORT MODAL -->
+<div class="modal-overlay" id="reportModal" onclick="handleOverlayClick(event)">
+  <div class="report-modal" id="reportModalBox">
+    <button class="modal-close" onclick="closeModal()">✕</button>
     <h3>Submit a Report</h3>
     <div id="formContent">
       <div class="form-row">
@@ -759,19 +1023,22 @@
       <strong>Report Submitted!</strong><br/>
       Thank you for helping improve Abyss Watcher.<br/>
       <span style="color:var(--muted); font-size:0.85rem;">We'll look into it as soon as possible.</span><br/><br/>
-      <a href="#support" class="support-btn" onclick="resetForm()">Submit Another</a>
+      <button class="support-btn" onclick="resetForm()">Submit Another</button>
     </div>
   </div>
-</section>
+</div>
 
 <div class="divider"></div>
 
 <!-- CTA -->
 <section id="cta">
-  <h2 class="cta-title">Enter the Abyss</h2>
-  <p class="cta-sub">Add Abyss Watcher to your server and claim your Shadow Essence.</p>
-  <div class="hero-buttons">
+  <h2 class="cta-title reveal">Enter the Abyss</h2>
+  <p class="cta-sub reveal">Add Abyss Watcher to your server and claim your Shadow Essence.</p>
+  <div class="hero-buttons reveal" style="margin-top:2rem">
     <a href="https://discord.com/oauth2/authorize?client_id=1500488671055450243&permissions=2147830848&integration_type=0&scope=bot" class="btn btn-primary" target="_blank">+ Invite Bot</a>
+    <a href="https://top.gg/bot/1500488671055450243?s=0ee4ff27093f4" class="btn btn-topgg" target="_blank">
+      <span class="topgg-icon">▲</span> Vote on Top.gg
+    </a>
   </div>
 </section>
 
@@ -782,159 +1049,541 @@
 </footer>
 
 <script>
-  // ── STARFIELD ──
+  /* ── STARFIELD ── */
   const canvas = document.getElementById('canvas');
   const ctx = canvas.getContext('2d');
-  let stars = [], W, H;
+  let stars = [], shootingStars = [], W, H;
 
   function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
 
   function initStars() {
     stars = [];
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < 220; i++) {
       stars.push({
         x: Math.random() * W, y: Math.random() * H,
-        r: Math.random() * 1.2 + 0.2, alpha: Math.random(),
+        r: Math.random() * 1.4 + 0.2, alpha: Math.random(),
         flicker: Math.random() * 0.02 + 0.005,
         dir: Math.random() > 0.5 ? 1 : -1,
       });
     }
   }
 
-  function draw() {
+  function spawnShootingStar() {
+    if (Math.random() < 0.005) {
+      shootingStars.push({
+        x: Math.random() * W, y: Math.random() * H * 0.5,
+        vx: 6 + Math.random() * 4, vy: 2 + Math.random() * 2,
+        len: 80 + Math.random() * 80, life: 0,
+      });
+    }
+  }
+
+  function drawBg() {
     ctx.clearRect(0, 0, W, H);
     stars.forEach(s => {
       s.alpha += s.flicker * s.dir;
       if (s.alpha >= 1 || s.alpha <= 0) s.dir *= -1;
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(192,132,252,${s.alpha})`;
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(192,132,252,${s.alpha})`; ctx.fill();
     });
-
-    // Floating orbs
+    spawnShootingStar();
+    shootingStars = shootingStars.filter(ss => ss.life < 1);
+    shootingStars.forEach(ss => {
+      ss.life += 0.025; ss.x += ss.vx; ss.y += ss.vy;
+      const g = ctx.createLinearGradient(ss.x, ss.y, ss.x - ss.vx * ss.len / 6, ss.y - ss.vy * ss.len / 6);
+      g.addColorStop(0, `rgba(255,255,255,${1 - ss.life})`); g.addColorStop(1, 'transparent');
+      ctx.beginPath(); ctx.strokeStyle = g; ctx.lineWidth = 1.5;
+      ctx.moveTo(ss.x, ss.y); ctx.lineTo(ss.x - ss.vx * ss.len / 6, ss.y - ss.vy * ss.len / 6); ctx.stroke();
+    });
     const t = Date.now() / 4000;
-    const orbs = [
-      { x: W * 0.2, y: H * 0.3, r: 200, c: 'rgba(123,47,255,0.04)' },
-      { x: W * 0.8, y: H * 0.6, r: 250, c: 'rgba(168,85,247,0.03)' },
-      { x: W * 0.5, y: H * 0.8, r: 180, c: 'rgba(123,47,255,0.03)' },
-    ];
-    orbs.forEach((o, i) => {
-      const ox = o.x + Math.sin(t + i) * 40;
-      const oy = o.y + Math.cos(t + i * 1.3) * 30;
-      const grad = ctx.createRadialGradient(ox, oy, 0, ox, oy, o.r);
-      grad.addColorStop(0, o.c);
-      grad.addColorStop(1, 'transparent');
-      ctx.beginPath(); ctx.arc(ox, oy, o.r, 0, Math.PI * 2);
-      ctx.fillStyle = grad; ctx.fill();
+    [{ x: W * 0.2, y: H * 0.3, r: 200, c: 'rgba(123,47,255,0.05)' },
+     { x: W * 0.8, y: H * 0.6, r: 250, c: 'rgba(168,85,247,0.04)' },
+     { x: W * 0.5, y: H * 0.8, r: 180, c: 'rgba(123,47,255,0.04)' }].forEach((o, i) => {
+      const ox = o.x + Math.sin(t + i) * 40, oy = o.y + Math.cos(t + i * 1.3) * 30;
+      const gr = ctx.createRadialGradient(ox, oy, 0, ox, oy, o.r);
+      gr.addColorStop(0, o.c); gr.addColorStop(1, 'transparent');
+      ctx.beginPath(); ctx.arc(ox, oy, o.r, 0, Math.PI * 2); ctx.fillStyle = gr; ctx.fill();
     });
-
-    requestAnimationFrame(draw);
+    requestAnimationFrame(drawBg);
   }
-
-  resize(); initStars(); draw();
+  resize(); initStars(); drawBg();
   window.addEventListener('resize', () => { resize(); initStars(); });
 
-  // ── EYE FOLLOWS CURSOR ──
-  const iris = document.getElementById('eyeIris');
-  const eyeOrb = document.getElementById('eyeOrb');
+  /* ── FLOATING RUNES ── */
+  const runeChars = ['ᚠ','ᚢ','ᚦ','ᚨ','ᚱ','ᚲ','ᚷ','ᚹ','ᚺ','ᚾ','ᛁ','ᛃ','ᛇ','ᛈ','ᛉ','ᛊ','ᛏ','ᛒ','ᛖ','ᛗ','ᛚ','ᛜ','ᛞ','ᛟ'];
+  const runesEl = document.getElementById('runes');
+  function spawnRune() {
+    const el = document.createElement('div');
+    el.className = 'rune';
+    el.textContent = runeChars[Math.floor(Math.random() * runeChars.length)];
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.animationDuration = (12 + Math.random() * 18) + 's';
+    el.style.animationDelay = (Math.random() * 5) + 's';
+    el.style.fontSize = (12 + Math.random() * 16) + 'px';
+    runesEl.appendChild(el);
+    setTimeout(() => el.remove(), 35000);
+  }
+  for (let i = 0; i < 8; i++) spawnRune();
+  setInterval(spawnRune, 3000);
 
-  // Max distance the iris can move from center (in px)
-  const MAX_MOVE = 18;
+  /* ══════════════════════════════════════════════════════
+     HYPER-REALISTIC ABYSS EYE — Canvas Engine
+  ══════════════════════════════════════════════════════ */
+  const eyeC = document.getElementById('eyeCanvas');
+  const ec = eyeC.getContext('2d');
+  const EW = 280, EH = 280, ECX = EW / 2, ECY = EH / 2;
 
-  document.addEventListener('mousemove', (e) => {
-    const rect = eyeOrb.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
+  // Mouse tracking relative to eye
+  let eyeMouseX = 0, eyeMouseY = 0;
+  let irisOffX = 0, irisOffY = 0;
+  let targetIrisX = 0, targetIrisY = 0;
+  let proximityScale = 1; // eye reacts when cursor is close
+  let blinkT = 0, isBlinking = false, blinkPhase = 0;
+  let irisRotation = 0;
+  let irisPulse = 0;
+  let smokeAngle = 0;
 
-    // Angle from eye center to cursor
-    const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX);
-
-    // Distance capped at MAX_MOVE
-    const dist = Math.min(
-      Math.hypot(e.clientX - centerX, e.clientY - centerY) / 8,
-      MAX_MOVE
-    );
-
-    const moveX = Math.cos(angle) * dist;
-    const moveY = Math.sin(angle) * dist;
-
-    iris.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
-  });
-
-  // On mobile — move eye toward center of touch
-  document.addEventListener('touchmove', (e) => {
-    const touch = e.touches[0];
-    const rect = eyeOrb.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const angle = Math.atan2(touch.clientY - centerY, touch.clientX - centerX);
-    const dist = Math.min(Math.hypot(touch.clientX - centerX, touch.clientY - centerY) / 8, MAX_MOVE);
-    const moveX = Math.cos(angle) * dist;
-    const moveY = Math.sin(angle) * dist;
-    iris.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
-  });
-
-  // Reset eye when mouse leaves window
-  document.addEventListener('mouseleave', () => {
-    iris.style.transform = 'translate(-50%, -50%)';
-  });
-
-  // ── SUPPORT FORM ──
-  function setType(type) {
-    setTimeout(() => { document.getElementById('reportType').value = type; }, 300);
+  // Abyss energy particles
+  const abyssParticles = [];
+  for (let i = 0; i < 22; i++) {
+    abyssParticles.push({
+      angle: Math.random() * Math.PI * 2,
+      radius: 110 + Math.random() * 50,
+      speed: (0.003 + Math.random() * 0.004) * (Math.random() > 0.5 ? 1 : -1),
+      size: 1 + Math.random() * 2.5,
+      alpha: 0.3 + Math.random() * 0.5,
+      hue: 260 + Math.random() * 50,
+    });
   }
 
+  // Micro-fibers inside iris for organic texture
+  const irisDetails = [];
+  for (let i = 0; i < 60; i++) {
+    irisDetails.push({
+      angle: (i / 60) * Math.PI * 2,
+      r1: 18 + Math.random() * 8,
+      r2: 60 + Math.random() * 22,
+      width: 0.5 + Math.random() * 1.2,
+      hue: 260 + Math.random() * 80,
+      sat: 60 + Math.random() * 40,
+      lum: 25 + Math.random() * 35,
+      alpha: 0.15 + Math.random() * 0.45,
+      wobble: Math.random() * Math.PI * 2,
+      wobbleSpeed: 0.005 + Math.random() * 0.01,
+    });
+  }
+
+  // Electric veins (blue highlights)
+  const veins = [];
+  for (let i = 0; i < 14; i++) {
+    veins.push({
+      angle: Math.random() * Math.PI * 2,
+      r1: 14, r2: 52 + Math.random() * 18,
+      width: 0.4 + Math.random() * 0.8,
+      alpha: 0.1 + Math.random() * 0.35,
+      flicker: Math.random() * Math.PI * 2,
+      flickerSpeed: 0.04 + Math.random() * 0.06,
+    });
+  }
+
+  document.addEventListener('mousemove', (e) => {
+    const rect = eyeC.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    eyeMouseX = e.clientX - cx;
+    eyeMouseY = e.clientY - cy;
+    const dist = Math.hypot(eyeMouseX, eyeMouseY);
+    // Proximity reaction: within 200px of center
+    proximityScale = dist < 200 ? 1 + (200 - dist) / 200 * 0.06 : 1;
+  });
+
+  document.addEventListener('touchmove', (e) => {
+    const t = e.touches[0];
+    const rect = eyeC.getBoundingClientRect();
+    eyeMouseX = t.clientX - (rect.left + rect.width / 2);
+    eyeMouseY = t.clientY - (rect.top + rect.height / 2);
+  });
+
+  // Schedule blink
+  function scheduleBlink() {
+    const delay = 3000 + Math.random() * 5000;
+    setTimeout(() => { isBlinking = true; blinkPhase = 0; }, delay);
+  }
+  scheduleBlink();
+
+  function drawEye(ts) {
+    requestAnimationFrame(drawEye);
+    ec.clearRect(0, 0, EW, EH);
+
+    const t = ts * 0.001;
+    irisRotation += 0.0015;
+    irisPulse = Math.sin(t * 1.3) * 0.5 + 0.5;
+    smokeAngle += 0.003;
+
+    // Smooth iris tracking
+    const maxOff = 14;
+    const angle = Math.atan2(eyeMouseY, eyeMouseX);
+    const d = Math.min(Math.hypot(eyeMouseX, eyeMouseY) / 6, maxOff);
+    targetIrisX = Math.cos(angle) * d;
+    targetIrisY = Math.sin(angle) * d;
+    irisOffX += (targetIrisX - irisOffX) * 0.06;
+    irisOffY += (targetIrisY - irisOffY) * 0.06;
+
+    // ── LAYER 0: Deep void sclera ──
+    ec.save();
+    const scleraGrad = ec.createRadialGradient(ECX - 10, ECY - 14, 10, ECX, ECY, 140);
+    scleraGrad.addColorStop(0, '#0a0018');
+    scleraGrad.addColorStop(0.4, '#05000f');
+    scleraGrad.addColorStop(0.75, '#030008');
+    scleraGrad.addColorStop(1, '#000000');
+    ec.beginPath(); ec.arc(ECX, ECY, 138, 0, Math.PI * 2);
+    ec.fillStyle = scleraGrad; ec.fill();
+
+    // Sclera: subtle blood-vein dark veins
+    for (let i = 0; i < 8; i++) {
+      const va = (i / 8) * Math.PI * 2 + 0.3;
+      const vx1 = ECX + Math.cos(va) * 72, vy1 = ECY + Math.sin(va) * 72;
+      const vx2 = ECX + Math.cos(va + 0.3) * 128, vy2 = ECY + Math.sin(va + 0.3) * 128;
+      ec.beginPath(); ec.moveTo(vx1, vy1); ec.lineTo(vx2, vy2);
+      ec.strokeStyle = `rgba(60,0,120,${0.04 + i * 0.01})`; ec.lineWidth = 0.5; ec.stroke();
+    }
+
+    // Sclera glow near iris edge
+    const limbalGrad = ec.createRadialGradient(ECX + irisOffX, ECY + irisOffY, 52, ECX + irisOffX, ECY + irisOffY, 90);
+    limbalGrad.addColorStop(0, 'rgba(100,20,200,0.0)');
+    limbalGrad.addColorStop(0.6, 'rgba(80,15,170,0.12)');
+    limbalGrad.addColorStop(1, 'rgba(40,5,100,0.22)');
+    ec.beginPath(); ec.arc(ECX, ECY, 138, 0, Math.PI * 2);
+    ec.fillStyle = limbalGrad; ec.fill();
+    ec.restore();
+
+    // ── LAYER 1: Dark smoke wisps on sclera ──
+    ec.save();
+    ec.globalAlpha = 0.18;
+    for (let i = 0; i < 3; i++) {
+      const sa = smokeAngle + (i / 3) * Math.PI * 2;
+      const sx = ECX + Math.cos(sa) * 90, sy = ECY + Math.sin(sa) * 90;
+      const sg = ec.createRadialGradient(sx, sy, 0, sx, sy, 55);
+      sg.addColorStop(0, 'rgba(30,0,80,0.5)'); sg.addColorStop(1, 'transparent');
+      ec.beginPath(); ec.arc(sx, sy, 55, 0, Math.PI * 2); ec.fillStyle = sg; ec.fill();
+    }
+    ec.restore();
+
+    // ── LAYER 2: IRIS base ──
+    ec.save();
+    ec.beginPath(); ec.arc(ECX + irisOffX, ECY + irisOffY, 78, 0, Math.PI * 2);
+    ec.clip();
+
+    // Deep iris base gradient
+    const irisBase = ec.createRadialGradient(
+      ECX + irisOffX - 8, ECY + irisOffY - 10, 2,
+      ECX + irisOffX, ECY + irisOffY, 78
+    );
+    irisBase.addColorStop(0,   '#1a0038');
+    irisBase.addColorStop(0.15,'#2d0060');
+    irisBase.addColorStop(0.35,'#4a0090');
+    irisBase.addColorStop(0.55,'#6010b0');
+    irisBase.addColorStop(0.72,'#3d0070');
+    irisBase.addColorStop(0.88,'#1a0035');
+    irisBase.addColorStop(1,   '#050010');
+    ec.beginPath(); ec.arc(ECX + irisOffX, ECY + irisOffY, 78, 0, Math.PI * 2);
+    ec.fillStyle = irisBase; ec.fill();
+
+    // Cosmic texture: rotating fibrous iris details
+    ec.save();
+    ec.translate(ECX + irisOffX, ECY + irisOffY);
+    ec.rotate(irisRotation);
+    irisDetails.forEach(d => {
+      d.wobble += d.wobbleSpeed;
+      const a = d.angle + Math.sin(d.wobble) * 0.04;
+      const x1 = Math.cos(a) * d.r1, y1 = Math.sin(a) * d.r1;
+      const x2 = Math.cos(a + 0.05) * d.r2, y2 = Math.sin(a + 0.05) * d.r2;
+      const cx1 = Math.cos(a + 0.12) * (d.r1 + d.r2) * 0.4;
+      const cy1 = Math.sin(a + 0.12) * (d.r1 + d.r2) * 0.4;
+      ec.beginPath(); ec.moveTo(x1, y1); ec.quadraticCurveTo(cx1, cy1, x2, y2);
+      ec.strokeStyle = `hsla(${d.hue},${d.sat}%,${d.lum}%,${d.alpha * (0.7 + irisPulse * 0.3)})`;
+      ec.lineWidth = d.width; ec.stroke();
+    });
+    ec.restore();
+
+    // Electric blue veins layer
+    ec.save();
+    ec.translate(ECX + irisOffX, ECY + irisOffY);
+    ec.rotate(-irisRotation * 0.4);
+    veins.forEach(v => {
+      v.flicker += v.flickerSpeed;
+      const flk = 0.5 + Math.sin(v.flicker) * 0.5;
+      const x1 = Math.cos(v.angle) * v.r1, y1 = Math.sin(v.angle) * v.r1;
+      const x2 = Math.cos(v.angle + 0.15) * v.r2, y2 = Math.sin(v.angle + 0.15) * v.r2;
+      ec.beginPath(); ec.moveTo(x1, y1); ec.lineTo(x2, y2);
+      ec.strokeStyle = `rgba(80,160,255,${v.alpha * flk})`;
+      ec.lineWidth = v.width; ec.stroke();
+    });
+    ec.restore();
+
+    // Radial glow rings inside iris
+    for (let r = 0; r < 3; r++) {
+      const rr = 25 + r * 18;
+      const ringAlpha = (0.06 + irisPulse * 0.04) * (1 - r * 0.25);
+      ec.beginPath(); ec.arc(ECX + irisOffX, ECY + irisOffY, rr, 0, Math.PI * 2);
+      ec.strokeStyle = r === 1
+        ? `rgba(100,180,255,${ringAlpha})`
+        : `rgba(160,80,255,${ringAlpha})`;
+      ec.lineWidth = 1; ec.stroke();
+    }
+
+    // Outer iris rim: deep purple-black
+    const irisRim = ec.createRadialGradient(ECX + irisOffX, ECY + irisOffY, 60, ECX + irisOffX, ECY + irisOffY, 78);
+    irisRim.addColorStop(0, 'transparent');
+    irisRim.addColorStop(0.7, 'rgba(10,0,30,0.3)');
+    irisRim.addColorStop(1, 'rgba(0,0,0,0.85)');
+    ec.beginPath(); ec.arc(ECX + irisOffX, ECY + irisOffY, 78, 0, Math.PI * 2);
+    ec.fillStyle = irisRim; ec.fill();
+
+    ec.restore();
+
+    // ── LAYER 3: IRIS neon edge glow ──
+    ec.save();
+    const irisEdge = ec.createRadialGradient(ECX + irisOffX, ECY + irisOffY, 72, ECX + irisOffX, ECY + irisOffY, 82);
+    irisEdge.addColorStop(0, `rgba(140,60,255,${0.5 + irisPulse * 0.3})`);
+    irisEdge.addColorStop(0.5, `rgba(100,20,220,${0.2 + irisPulse * 0.15})`);
+    irisEdge.addColorStop(1, 'transparent');
+    ec.beginPath(); ec.arc(ECX + irisOffX, ECY + irisOffY, 82, 0, Math.PI * 2);
+    ec.fillStyle = irisEdge; ec.fill();
+    ec.restore();
+
+    // ── LAYER 4: VERTICAL SLIT PUPIL ──
+    ec.save();
+    const px = ECX + irisOffX, py = ECY + irisOffY;
+    ec.translate(px, py);
+
+    // Pupil shadow depth
+    const pupilW = 11 + irisPulse * 2;
+    const pupilH = 44 + irisPulse * 4;
+
+    ec.save();
+    ec.shadowColor = 'rgba(0,0,0,1)';
+    ec.shadowBlur = 20;
+
+    // Outer pupil glow (dark abyss energy around slit)
+    const pupilOuter = ec.createRadialGradient(0, 0, pupilW * 0.5, 0, 0, pupilW * 2.5);
+    pupilOuter.addColorStop(0, 'rgba(5,0,20,0.95)');
+    pupilOuter.addColorStop(0.5, 'rgba(10,0,30,0.5)');
+    pupilOuter.addColorStop(1, 'transparent');
+    ec.beginPath();
+    ec.ellipse(0, 0, pupilW * 2.5, pupilH * 0.85, 0, 0, Math.PI * 2);
+    ec.fillStyle = pupilOuter; ec.fill();
+    ec.restore();
+
+    // Main slit pupil shape
+    ec.beginPath();
+    ec.ellipse(0, 0, pupilW, pupilH, 0, 0, Math.PI * 2);
+    const slitGrad = ec.createLinearGradient(-pupilW, -pupilH, pupilW, pupilH);
+    slitGrad.addColorStop(0, '#000000');
+    slitGrad.addColorStop(0.3, '#020005');
+    slitGrad.addColorStop(0.7, '#010003');
+    slitGrad.addColorStop(1, '#000000');
+    ec.fillStyle = slitGrad; ec.fill();
+
+    // Pupil inner void depth
+    const voidGrad = ec.createRadialGradient(0, -8, 0, 0, 0, pupilH * 0.6);
+    voidGrad.addColorStop(0, 'rgba(20,0,50,0.3)');
+    voidGrad.addColorStop(1, 'rgba(0,0,0,0)');
+    ec.beginPath(); ec.ellipse(0, 0, pupilW * 0.7, pupilH * 0.9, 0, 0, Math.PI * 2);
+    ec.fillStyle = voidGrad; ec.fill();
+
+    // Purple rim around slit pupil
+    ec.beginPath();
+    ec.ellipse(0, 0, pupilW + 2, pupilH + 2, 0, 0, Math.PI * 2);
+    ec.strokeStyle = `rgba(120,40,220,${0.25 + irisPulse * 0.2})`; ec.lineWidth = 1.5; ec.stroke();
+
+    ec.restore();
+
+    // ── LAYER 5: Glossy reflections ──
+    ec.save();
+    // Main top-left specular highlight
+    const spec1 = ec.createRadialGradient(
+      ECX + irisOffX - 20, ECY + irisOffY - 25, 0,
+      ECX + irisOffX - 20, ECY + irisOffY - 25, 22
+    );
+    spec1.addColorStop(0, 'rgba(255,255,255,0.45)');
+    spec1.addColorStop(0.4, 'rgba(255,255,255,0.12)');
+    spec1.addColorStop(1, 'transparent');
+    ec.beginPath(); ec.ellipse(ECX + irisOffX - 20, ECY + irisOffY - 25, 16, 10, -0.4, 0, Math.PI * 2);
+    ec.fillStyle = spec1; ec.fill();
+
+    // Secondary smaller highlight
+    const spec2 = ec.createRadialGradient(
+      ECX + irisOffX + 18, ECY + irisOffY - 18, 0,
+      ECX + irisOffX + 18, ECY + irisOffY - 18, 8
+    );
+    spec2.addColorStop(0, 'rgba(180,140,255,0.3)');
+    spec2.addColorStop(1, 'transparent');
+    ec.beginPath(); ec.arc(ECX + irisOffX + 18, ECY + irisOffY - 18, 8, 0, Math.PI * 2);
+    ec.fillStyle = spec2; ec.fill();
+
+    // Thin crescent bottom reflection
+    ec.beginPath();
+    ec.arc(ECX + irisOffX, ECY + irisOffY + 34, 24, Math.PI * 0.15, Math.PI * 0.85);
+    ec.strokeStyle = `rgba(140,80,255,${0.08 + irisPulse * 0.06})`; ec.lineWidth = 2; ec.stroke();
+
+    ec.restore();
+
+    // ── LAYER 6: BLINK ──
+    if (isBlinking) {
+      blinkPhase += 0.1;
+      const blinkProgress = Math.sin(blinkPhase);
+      if (blinkPhase >= Math.PI) { isBlinking = false; scheduleBlink(); }
+
+      const lidH = blinkProgress * ECY;
+      // Top lid
+      ec.save();
+      const lidTopGrad = ec.createLinearGradient(0, 0, 0, lidH);
+      lidTopGrad.addColorStop(0, '#02000a');
+      lidTopGrad.addColorStop(0.8, '#05001a');
+      lidTopGrad.addColorStop(1, 'rgba(20,0,50,0.6)');
+      ec.beginPath(); ec.rect(0, 0, EW, lidH);
+      ec.fillStyle = lidTopGrad; ec.fill();
+      // Lash shadow at lid edge
+      const lashGrad = ec.createLinearGradient(0, lidH - 6, 0, lidH + 6);
+      lashGrad.addColorStop(0, 'rgba(100,20,200,0.3)'); lashGrad.addColorStop(1, 'transparent');
+      ec.beginPath(); ec.rect(0, lidH - 6, EW, 12); ec.fillStyle = lashGrad; ec.fill();
+      ec.restore();
+
+      // Bottom lid
+      ec.save();
+      const lidBotGrad = ec.createLinearGradient(0, EH, 0, EH - lidH);
+      lidBotGrad.addColorStop(0, '#02000a');
+      lidBotGrad.addColorStop(0.8, '#05001a');
+      lidBotGrad.addColorStop(1, 'rgba(20,0,50,0.6)');
+      ec.beginPath(); ec.rect(0, EH - lidH, EW, lidH);
+      ec.fillStyle = lidBotGrad; ec.fill();
+      ec.restore();
+    }
+
+    // ── LAYER 7: Circular clip + outer darkness ──
+    ec.save();
+    // Darken outside iris on sclera (vignette)
+    const vigGrad = ec.createRadialGradient(ECX, ECY, 75, ECX, ECY, 140);
+    vigGrad.addColorStop(0, 'transparent');
+    vigGrad.addColorStop(0.5, 'rgba(2,0,10,0.1)');
+    vigGrad.addColorStop(1, 'rgba(2,0,10,0.92)');
+    ec.beginPath(); ec.arc(ECX, ECY, 140, 0, Math.PI * 2);
+    ec.fillStyle = vigGrad; ec.fill();
+    ec.restore();
+
+    // ── LAYER 8: Abyss energy particles ──
+    abyssParticles.forEach(p => {
+      p.angle += p.speed;
+      const px2 = ECX + Math.cos(p.angle) * p.radius;
+      const py2 = ECY + Math.sin(p.angle) * p.radius;
+      const pg = ec.createRadialGradient(px2, py2, 0, px2, py2, p.size * 2.5);
+      pg.addColorStop(0, `hsla(${p.hue},90%,70%,${p.alpha * (0.5 + irisPulse * 0.5)})`);
+      pg.addColorStop(1, 'transparent');
+      ec.beginPath(); ec.arc(px2, py2, p.size * 2.5, 0, Math.PI * 2);
+      ec.fillStyle = pg; ec.fill();
+    });
+
+    // ── LAYER 9: Cinematic lens flare streak ──
+    ec.save();
+    ec.globalAlpha = 0.06 + irisPulse * 0.04;
+    const flareX = ECX - 30, flareY = ECY - 40;
+    const flareGrad = ec.createLinearGradient(flareX - 40, flareY, flareX + 80, flareY + 30);
+    flareGrad.addColorStop(0, 'transparent');
+    flareGrad.addColorStop(0.4, 'rgba(200,160,255,1)');
+    flareGrad.addColorStop(0.6, 'rgba(255,255,255,0.8)');
+    flareGrad.addColorStop(1, 'transparent');
+    ec.beginPath();
+    ec.ellipse(flareX + 20, flareY + 15, 50, 2, -0.3, 0, Math.PI * 2);
+    ec.fillStyle = flareGrad; ec.fill();
+    ec.restore();
+  }
+
+  requestAnimationFrame(drawEye);
+
+  /* ── CARD MOUSE-MOVE GLOW ── */
+  document.querySelectorAll('.feat-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const x = ((e.clientX - r.left) / r.width) * 100;
+      const y = ((e.clientY - r.top) / r.height) * 100;
+      card.style.setProperty('--mx', x + '%');
+      card.style.setProperty('--my', y + '%');
+    });
+  });
+
+  /* ── 3D TILT ON CARDS ── */
+  document.querySelectorAll('.tilt').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      card.style.transform = `perspective(600px) rotateY(${x*12}deg) rotateX(${-y*12}deg) translateY(-6px) scale(1.02)`;
+    });
+    card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+  });
+
+  /* ── NAVBAR SCROLL ── */
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 30);
+  });
+
+  /* ── SCROLL REVEAL ── */
+  const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.1 });
+  revealEls.forEach(el => observer.observe(el));
+
+  /* ── MODAL ── */
+  function openModal(type) {
+    document.getElementById('reportType').value = type;
+    document.getElementById('reportModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('reportModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('reportModal')) closeModal();
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  /* ── FORM SUBMIT ── */
   async function submitReport() {
     const username = document.getElementById('username').value.trim();
     const desc = document.getElementById('description').value.trim();
-    if (!username || !desc) {
-      alert('Please fill in at least your Discord username and description.');
-      return;
-    }
-
+    if (!username || !desc) { alert('Please fill in at least your Discord username and description.'); return; }
     const btn = document.querySelector('.form-submit');
-    btn.textContent = 'Submitting...';
-    btn.disabled = true;
-
+    btn.textContent = 'Submitting...'; btn.disabled = true;
     const data = {
-      username,
-      type: document.getElementById('reportType').value,
-      command: document.getElementById('command').value,
-      description: desc,
+      username, type: document.getElementById('reportType').value,
+      command: document.getElementById('command').value, description: desc,
       steps: document.getElementById('steps').value,
     };
-
     try {
       const res = await fetch('https://formspree.io/f/xnjwovkr', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(data),
       });
-
       if (res.ok) {
         document.getElementById('formContent').style.display = 'none';
         document.getElementById('formSuccess').style.display = 'block';
-      } else {
-        alert('Something went wrong. Please try again.');
-        btn.textContent = '⚔️ Submit Report';
-        btn.disabled = false;
-      }
-    } catch (err) {
-      alert('Network error. Please try again.');
-      btn.textContent = '⚔️ Submit Report';
-      btn.disabled = false;
-    }
+      } else { alert('Something went wrong. Please try again.'); btn.textContent = '⚔️ Submit Report'; btn.disabled = false; }
+    } catch (err) { alert('Network error. Please try again.'); btn.textContent = '⚔️ Submit Report'; btn.disabled = false; }
   }
 
   function resetForm() {
-    document.getElementById('username').value = '';
-    document.getElementById('command').value = '';
-    document.getElementById('description').value = '';
-    document.getElementById('steps').value = '';
+    ['username','command','description','steps'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('reportType').value = 'Bug Report';
     document.getElementById('formContent').style.display = 'block';
     document.getElementById('formSuccess').style.display = 'none';
+    const btn = document.querySelector('.form-submit');
+    btn.textContent = '⚔️ Submit Report'; btn.disabled = false;
   }
 </script>
 
