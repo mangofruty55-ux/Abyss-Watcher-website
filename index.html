@@ -511,6 +511,7 @@
       border-radius: 8px;
       background: radial-gradient(circle at 50% 0%, rgba(123,47,255,0.1), transparent 70%);
       opacity: 0; transition: opacity 0.4s;
+      pointer-events: none;
     }
     .support-card:hover::after { opacity: 1; }
     .support-card:hover {
@@ -738,7 +739,13 @@
     }
 
     /* ── TILT EFFECT ── */
-    .tilt { transform-style: preserve-3d; }
+    .tilt {
+      transform-style: preserve-3d;
+      transition: transform 0.12s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s, border-color 0.3s;
+    }
+    .tilt:hover {
+      transition: transform 0.05s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s, border-color 0.3s;
+    }
 
     /* ── COUNTER ANIMATION ── */
     .stat-number {
@@ -1036,7 +1043,7 @@
   <p class="cta-sub reveal">Add Abyss Watcher to your server and claim your Shadow Essence.</p>
   <div class="hero-buttons reveal" style="margin-top:2rem">
     <a href="https://discord.com/oauth2/authorize?client_id=1500488671055450243&permissions=2147830848&integration_type=0&scope=bot" class="btn btn-primary" target="_blank">+ Invite Bot</a>
-    <a href="https://top.gg/bot/1500488671055450243?s=0ee4ff27093f4" class="btn btn-topgg" target="_blank">
+    <a href="https://top.gg/bot/1500488671055450243" class="btn btn-topgg" target="_blank">
       <span class="topgg-icon">▲</span> Vote on Top.gg
     </a>
   </div>
@@ -1226,8 +1233,8 @@
     const d = Math.min(Math.hypot(eyeMouseX, eyeMouseY) / 6, maxOff);
     targetIrisX = Math.cos(angle) * d;
     targetIrisY = Math.sin(angle) * d;
-    irisOffX += (targetIrisX - irisOffX) * 0.06;
-    irisOffY += (targetIrisY - irisOffY) * 0.06;
+    irisOffX += (targetIrisX - irisOffX) * 0.14;
+    irisOffY += (targetIrisY - irisOffY) * 0.14;
 
     // ── LAYER 0: Deep void sclera ──
     ec.save();
@@ -1514,13 +1521,40 @@
 
   /* ── 3D TILT ON CARDS ── */
   document.querySelectorAll('.tilt').forEach(card => {
+    let tiltX = 0, tiltY = 0, targetTX = 0, targetTY = 0, rafId = null;
+
+    function animateTilt() {
+      tiltX += (targetTX - tiltX) * 0.18;
+      tiltY += (targetTY - tiltY) * 0.18;
+      card.style.transform = `perspective(600px) rotateY(${tiltX}deg) rotateX(${-tiltY}deg) translateY(-6px) scale(1.02)`;
+      if (Math.abs(targetTX - tiltX) > 0.01 || Math.abs(targetTY - tiltY) > 0.01) {
+        rafId = requestAnimationFrame(animateTilt);
+      }
+    }
+
     card.addEventListener('mousemove', e => {
       const r = card.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width - 0.5;
-      const y = (e.clientY - r.top) / r.height - 0.5;
-      card.style.transform = `perspective(600px) rotateY(${x*12}deg) rotateX(${-y*12}deg) translateY(-6px) scale(1.02)`;
+      targetTX = ((e.clientX - r.left) / r.width - 0.5) * 12;
+      targetTY = ((e.clientY - r.top) / r.height - 0.5) * 12;
+      if (!rafId) rafId = requestAnimationFrame(animateTilt);
     });
-    card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+
+    card.addEventListener('mouseleave', () => {
+      targetTX = 0; targetTY = 0;
+      function resetTilt() {
+        tiltX += (0 - tiltX) * 0.14;
+        tiltY += (0 - tiltY) * 0.14;
+        card.style.transform = `perspective(600px) rotateY(${tiltX}deg) rotateX(${-tiltY}deg) translateY(0px) scale(1)`;
+        if (Math.abs(tiltX) > 0.05 || Math.abs(tiltY) > 0.05) {
+          rafId = requestAnimationFrame(resetTilt);
+        } else {
+          card.style.transform = '';
+          rafId = null;
+        }
+      }
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(resetTilt);
+    });
   });
 
   /* ── NAVBAR SCROLL ── */
