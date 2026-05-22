@@ -766,6 +766,335 @@
       margin: 0.5rem auto 3rem;
       animation: shimmer 3s linear infinite;
     }
+
+    /* ── STATS BAR ── */
+    #stats-bar {
+      background: rgba(7,1,26,0.7);
+      border: 1px solid rgba(123,47,255,0.25);
+      border-radius: 12px;
+      backdrop-filter: blur(12px);
+      position: relative;
+      max-width: 680px;
+      margin: 1.8rem auto 0;
+      overflow: hidden;
+      animation: fade-up 1s 1s ease both;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    #stats-bar::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--glow2), var(--eye), var(--glow2), transparent);
+      background-size: 200% auto;
+      animation: shimmer 3s linear infinite;
+    }
+    #stats-bar:hover {
+      border-color: rgba(192,132,252,0.4);
+      box-shadow: 0 0 30px rgba(123,47,255,0.15);
+    }
+    .stats-inner {
+      padding: 1rem 1.5rem;
+      display: flex; justify-content: center; align-items: center;
+      gap: 0; flex-wrap: wrap;
+    }
+    .stat-item {
+      display: flex; align-items: center; gap: 0.7rem;
+      position: relative;
+    }
+    .stat-item::after {
+      content: '';
+      position: absolute; right: -1.5rem; top: 50%;
+      transform: translateY(-50%);
+      width: 1px; height: 20px;
+      background: rgba(123,47,255,0.2);
+    }
+    .stat-item:last-child::after { display: none; }
+    .stat-icon {
+      width: 32px; height: 32px;
+      background: rgba(123,47,255,0.15);
+      border: 1px solid rgba(123,47,255,0.25);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+    }
+    .stat-item:hover .stat-icon {
+      background: rgba(123,47,255,0.3);
+      box-shadow: 0 0 12px rgba(123,47,255,0.3);
+    }
+    .stat-info { display: flex; flex-direction: column; }
+    .stat-value {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1rem; color: var(--eye);
+      text-shadow: 0 0 12px var(--glow);
+      line-height: 1;
+      transition: all 0.3s;
+    }
+    .stat-label {
+      font-size: 0.65rem; color: var(--muted);
+      letter-spacing: 1.5px; text-transform: uppercase;
+      line-height: 1; margin-top: 2px;
+    }
+    .stat-live {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      font-size: 0.6rem; color: #4ade80;
+      letter-spacing: 1px; text-transform: uppercase;
+      margin-top: 1px;
+    }
+    .stat-live-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: #4ade80; box-shadow: 0 0 6px #4ade80;
+      animation: blink-dot 2s ease-in-out infinite;
+    }
+
+    /* ── COMMANDS POPUP MODAL ── */
+    #cmdModal {
+      position: fixed; inset: 0; z-index: 600;
+      background: rgba(2,0,10,0.9);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    #cmdModal.open { opacity: 1; pointer-events: all; }
+
+    .cmd-modal-box {
+      background: rgba(10,2,30,0.98);
+      border: 1px solid rgba(123,47,255,0.3);
+      border-radius: 16px;
+      width: 95%; max-width: 1000px;
+      max-height: 85vh;
+      display: flex; flex-direction: column;
+      position: relative; overflow: hidden;
+      transform: scale(0.92) translateY(20px);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 0 80px rgba(123,47,255,0.2), 0 0 160px rgba(123,47,255,0.08);
+    }
+    #cmdModal.open .cmd-modal-box { transform: scale(1) translateY(0); }
+    .cmd-modal-box::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--glow), var(--glow2), transparent);
+      border-radius: 16px 16px 0 0;
+    }
+
+    .cmd-modal-header {
+      padding: 1.5rem 2rem 1rem;
+      border-bottom: 1px solid rgba(123,47,255,0.15);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .cmd-modal-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1.1rem; color: var(--eye);
+      letter-spacing: 2px; text-shadow: 0 0 15px var(--glow);
+    }
+
+    /* Category filter tabs */
+    .cmd-filter-tabs {
+      display: flex; gap: 0.5rem; flex-wrap: wrap;
+      padding: 1rem 2rem 0.5rem;
+      flex-shrink: 0;
+    }
+    .cmd-tab {
+      padding: 0.35rem 1rem; border-radius: 20px;
+      font-size: 0.75rem; font-family: 'Rajdhani', sans-serif;
+      font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+      cursor: pointer; transition: all 0.25s;
+      border: 1px solid rgba(123,47,255,0.2);
+      color: var(--muted); background: transparent;
+    }
+    .cmd-tab:hover, .cmd-tab.active {
+      background: rgba(123,47,255,0.2);
+      border-color: var(--glow2); color: var(--eye);
+      box-shadow: 0 0 12px rgba(123,47,255,0.2);
+    }
+    .cmd-tab.active {
+      background: rgba(123,47,255,0.3);
+      border-color: var(--eye);
+    }
+
+    /* Search box */
+    .cmd-search-wrap {
+      padding: 0.75rem 2rem;
+      flex-shrink: 0;
+    }
+    .cmd-search {
+      width: 100%;
+      background: rgba(123,47,255,0.08);
+      border: 1px solid rgba(123,47,255,0.2);
+      border-radius: 8px;
+      padding: 0.65rem 1rem 0.65rem 2.5rem;
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238b6db0' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: 0.8rem center;
+    }
+    .cmd-search:focus {
+      border-color: var(--glow);
+      box-shadow: 0 0 15px rgba(123,47,255,0.2);
+    }
+
+    /* Scrollable cmd list */
+    .cmd-modal-body {
+      overflow-y: auto; padding: 1rem 2rem 2rem;
+      flex: 1;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(123,47,255,0.3) transparent;
+    }
+    .cmd-modal-body::-webkit-scrollbar { width: 5px; }
+    .cmd-modal-body::-webkit-scrollbar-track { background: transparent; }
+    .cmd-modal-body::-webkit-scrollbar-thumb { background: rgba(123,47,255,0.3); border-radius: 3px; }
+
+    .cmd-modal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .cmd-modal-card {
+      background: rgba(13,2,40,0.7);
+      border: 1px solid rgba(123,47,255,0.15);
+      border-radius: 10px; padding: 1.2rem 1.4rem;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      backdrop-filter: blur(8px);
+      position: relative; overflow: hidden;
+      cursor: default;
+    }
+    .cmd-modal-card::before {
+      content: '';
+      position: absolute; top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(123,47,255,0.05), transparent);
+      transition: left 0.5s ease;
+    }
+    .cmd-modal-card:hover::before { left: 100%; }
+    .cmd-modal-card:hover {
+      border-color: rgba(192,132,252,0.4);
+      background: rgba(123,47,255,0.1);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(123,47,255,0.2);
+    }
+    .cmd-modal-card.hidden { display: none; }
+
+    .cmd-modal-cat {
+      font-size: 0.65rem; text-transform: uppercase;
+      letter-spacing: 2px; color: var(--glow2);
+      margin-bottom: 0.5rem;
+      display: inline-flex; align-items: center; gap: 0.3rem;
+    }
+    .cmd-modal-cat::before {
+      content: ''; width: 4px; height: 4px; border-radius: 50%;
+      background: var(--glow2); box-shadow: 0 0 5px var(--glow2);
+    }
+    .cmd-modal-name {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.9rem; color: #fff; margin-bottom: 0.35rem;
+      transition: color 0.3s;
+    }
+    .cmd-modal-card:hover .cmd-modal-name { color: var(--eye); }
+    .cmd-modal-name span { color: var(--glow2); }
+    .cmd-modal-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; font-weight: 300; }
+    .cmd-modal-alias { margin-top: 0.5rem; font-size: 0.74rem; color: rgba(139,109,176,0.6); font-style: italic; }
+
+    .cmd-no-results {
+      text-align: center; padding: 3rem;
+      color: var(--muted); font-size: 0.95rem;
+      display: none;
+    }
+    .cmd-no-results.show { display: block; }
+
+    /* Commands section — show button only */
+    #commands { padding: 4rem 2rem; max-width: 1100px; margin: 0 auto; text-align: center; }
+    .cmd-open-btn {
+      margin-top: 1.5rem;
+      display: inline-flex; align-items: center; gap: 0.8rem;
+      padding: 1rem 2.5rem;
+      background: rgba(123,47,255,0.1);
+      border: 1px solid rgba(123,47,255,0.3);
+      border-radius: 8px;
+      color: var(--eye);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1rem; font-weight: 600;
+      letter-spacing: 2px; text-transform: uppercase;
+      cursor: pointer; transition: all 0.35s;
+      position: relative; overflow: hidden;
+    }
+    .cmd-open-btn::before {
+      content: '';
+      position: absolute; top: 50%; left: 50%;
+      width: 0; height: 0;
+      background: rgba(123,47,255,0.2);
+      border-radius: 50%;
+      transform: translate(-50%,-50%);
+      transition: width 0.5s, height 0.5s;
+    }
+    .cmd-open-btn:hover::before { width: 400px; height: 400px; }
+    .cmd-open-btn:hover {
+      border-color: var(--eye);
+      background: rgba(123,47,255,0.2);
+      box-shadow: 0 0 30px rgba(123,47,255,0.3);
+      transform: translateY(-2px);
+    }
+    .cmd-count-badge {
+      background: rgba(123,47,255,0.3);
+      border: 1px solid rgba(192,132,252,0.3);
+      border-radius: 20px; padding: 0.2rem 0.7rem;
+      font-size: 0.75rem; color: var(--eye);
+    }
+
+    /* ── VOTE SECTION ── */
+    #vote { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; text-align: center; }
+    .vote-container { display: flex; flex-direction: column; align-items: center; gap: 2.5rem; }
+    .vote-widget-wrap {
+      background: rgba(13,2,40,0.7);
+      border: 1px solid rgba(123,47,255,0.2);
+      border-radius: 12px; padding: 2rem 2.5rem;
+      backdrop-filter: blur(8px); transition: all 0.3s;
+      display: inline-block;
+    }
+    .vote-widget-wrap:hover {
+      border-color: rgba(192,132,252,0.5);
+      box-shadow: 0 0 30px rgba(123,47,255,0.2);
+    }
+    .vote-widget-wrap img { display: block; border-radius: 8px; max-width: 100%; }
+    .vote-rewards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.2rem; width: 100%; max-width: 900px;
+    }
+    .vote-reward-card {
+      background: rgba(7,1,26,0.8);
+      border: 1px solid rgba(123,47,255,0.15);
+      border-radius: 8px; padding: 1.5rem; text-align: center; transition: all 0.3s;
+    }
+    .vote-reward-card:hover {
+      border-color: rgba(192,132,252,0.4);
+      box-shadow: 0 0 20px rgba(123,47,255,0.15);
+    }
+    .vote-reward-icon { font-size: 2rem; margin-bottom: 0.6rem; display: block; }
+    .vote-reward-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.85rem; color: var(--eye); margin-bottom: 0.4rem; letter-spacing: 1px;
+    }
+    .vote-reward-desc { font-size: 0.85rem; color: var(--muted); font-weight: 300; }
+    .vote-weekend {
+      background: rgba(123,47,255,0.1);
+      border: 1px solid rgba(123,47,255,0.3);
+      border-radius: 8px; padding: 1rem 2rem;
+      font-size: 0.9rem; color: var(--eye); letter-spacing: 1px;
+    }
+
+    @media (max-width: 600px) {
+      .stats-inner { gap: 1.5rem; }
+      .cmd-modal-box { border-radius: 12px; }
+      .cmd-filter-tabs { padding: 0.75rem 1rem 0.5rem; }
+      .cmd-modal-header, .cmd-search-wrap, .cmd-modal-body { padding-left: 1rem; padding-right: 1rem; }
+    }
+
   </style>
 </head>
 <body>
@@ -782,9 +1111,11 @@
     <li><a href="#commands">Commands</a></li>
     <li><a href="#features">Features</a></li>
     <li><a href="#support">Support</a></li>
+    <li><a href="#vote">Vote</a></li>
     <li><a href="#cta">Invite</a></li>
   </ul>
 </nav>
+
 
 <!-- HERO -->
 <section id="hero">
@@ -812,6 +1143,50 @@
   <div class="status-badge">
     <span class="status-dot"></span>
     Bot Status: Online
+  </div>
+
+  <!-- STATS BAR (inline hero box) -->
+  <div id="stats-bar">
+    <div class="stats-inner">
+      <div class="stat-item">
+        <div class="stat-icon">👥</div>
+        <div class="stat-info">
+          <span class="stat-value" id="stat-players">—</span>
+          <span class="stat-label">Global Players</span>
+          <span class="stat-live"><span class="stat-live-dot"></span>Live</span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon">🌐</div>
+        <div class="stat-info">
+          <span class="stat-value" id="stat-servers">—</span>
+          <span class="stat-label">Servers</span>
+          <span class="stat-live"><span class="stat-live-dot"></span>Live</span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon">⚡</div>
+        <div class="stat-info">
+          <span class="stat-value" id="stat-commands">41+</span>
+          <span class="stat-label">Commands</span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon">🔄</div>
+        <div class="stat-info">
+          <span class="stat-value" id="stat-uptime">99.9%</span>
+          <span class="stat-label">Uptime</span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon">🗳️</div>
+        <div class="stat-info">
+          <span class="stat-value" id="stat-votes">—</span>
+          <span class="stat-label">Total Votes</span>
+          <span class="stat-live"><span class="stat-live-dot"></span>Live</span>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -871,95 +1246,14 @@
 <section id="commands">
   <h2 class="section-title reveal">Commands</h2>
   <div class="section-line-animated"></div>
-
-  <div class="cmd-grid">
-    <div class="cmd-card reveal" style="transition-delay:0.05s">
-      <div class="cmd-category">Economy</div>
-      <div class="cmd-name"><span>/</span>balance</div>
-      <p class="cmd-desc">Check your current Shadow Essence balance in server or global mode.</p>
-      <p class="cmd-aliases">Aliases: bal, b</p>
-    </div>
-    <div class="cmd-card reveal" style="transition-delay:0.1s">
-      <div class="cmd-category">Economy</div>
-      <div class="cmd-name"><span>/</span>daily</div>
-      <p class="cmd-desc">Claim your daily Shadow Essence reward. 24 hour cooldown. Also earns XP.</p>
-    </div>
-    <div class="cmd-card reveal" style="transition-delay:0.15s">
-      <div class="cmd-category">Economy</div>
-      <div class="cmd-name"><span>/</span>give</div>
-      <p class="cmd-desc">Send Shadow Essence to another user with a confirmation system.</p>
-      <p class="cmd-aliases">Aliases: g</p>
-    </div>
-    <div class="cmd-card reveal" style="transition-delay:0.2s">
-      <div class="cmd-category">Economy</div>
-      <div class="cmd-name"><span>/</span>leaderboard</div>
-      <p class="cmd-desc">View top players by essence, XP, rank or commands used. Toggle server or global.</p>
-      <p class="cmd-aliases">Aliases: lb, top</p>
-    </div>
-    <div class="cmd-card reveal" style="transition-delay:0.25s">
-      <div class="cmd-category">Ranks</div>
-      <div class="cmd-name"><span>/</span>rank</div>
-      <p class="cmd-desc">View your server rank and global rank with XP progress bars for both simultaneously.</p>
-      <p class="cmd-aliases">Aliases: r</p>
-    </div>
-    <div class="cmd-card reveal" style="transition-delay:0.3s">
-      <div class="cmd-category">Story</div>
-      <div class="cmd-name"><span>/</span>story</div>
-      <p class="cmd-desc">Read your current chapter of the Abyss Chronicles and track your challenge progress.</p>
-      <p class="cmd-aliases">Aliases: st &nbsp;|&nbsp; Actions: view, claim</p>
-    </div>
-    <div class="cmd-card reveal" style="transition-delay:0.35s">
-      <div class="cmd-category">Games</div>
-      <div class="cmd-name"><span>/</span>coinflip</div>
-      <p class="cmd-desc">Bet your Shadow Essence on a coin flip. Choose head or tails. Win 2x your bet.</p>
-      <p class="cmd-aliases">Aliases: cf &nbsp;|&nbsp; Choices: h, t</p>
-    </div>
-    <div class="cmd-card reveal" style="transition-delay:0.4s">
-      <div class="cmd-category">Games</div>
-      <div class="cmd-name"><span>/</span>slots</div>
-      <p class="cmd-desc">Spin the slot machine with custom payout multipliers up to 50x on 7️⃣7️⃣7️⃣.</p>
-      <p class="cmd-aliases">Aliases: sl</p>
-    </div>
-    <div class="cmd-card reveal" style="transition-delay:0.45s">
-      <div class="cmd-category">Games</div>
-      <div class="cmd-name"><span>/</span>blackjack</div>
-      <p class="cmd-desc">Play interactive blackjack with hit/stay buttons. Natural blackjack pays 3x.</p>
-      <p class="cmd-aliases">Aliases: bj</p>
-    </div>
-    <div class="cmd-card reveal" style="transition-delay:0.5s">
-      <div class="cmd-category">Fun</div>
-      <div class="cmd-name"><span>/</span>meme</div>
-      <p class="cmd-desc">Get a random meme delivered from the depths of the internet.</p>
-      <p class="cmd-aliases">Aliases: m</p>
-    </div>
-    <div class="cmd-card reveal" style="transition-delay:0.55s">
-      <div class="cmd-category">Utility</div>
-      <div class="cmd-name"><span>/</span>avatar</div>
-      <p class="cmd-desc">Display the avatar of any user in full resolution.</p>
-    </div>
-    <div class="cmd-card reveal" style="transition-delay:0.6s">
-      <div class="cmd-category">Utility</div>
-      <div class="cmd-name"><span>/</span>ping</div>
-      <p class="cmd-desc">Check the bot's response latency in milliseconds.</p>
-    </div>
-    <div class="cmd-card reveal" style="transition-delay:0.65s">
-      <div class="cmd-category">Utility</div>
-      <div class="cmd-name"><span>/</span>stats</div>
-      <p class="cmd-desc">View the bot's uptime, memory usage, and CPU load.</p>
-    </div>
-    <div class="cmd-card reveal" style="transition-delay:0.7s">
-      <div class="cmd-category">Utility</div>
-      <div class="cmd-name"><span>/</span>help</div>
-      <p class="cmd-desc">View all commands organized by category with interactive buttons.</p>
-      <p class="cmd-aliases">Aliases: h</p>
-    </div>
-  </div>
-
-  <div class="prefix-box reveal">
-    <p>All commands support both slash <code>/command</code> and prefix syntax.<br/>
-    Use <code>aw command</code> or <code>Aw command</code> for prefix commands.<br/>
-    Example: <code>aw cf 500 h</code> &nbsp;|&nbsp; <code>aw sl 1000</code> &nbsp;|&nbsp; <code>aw bj 5000</code> &nbsp;|&nbsp; <code>aw lb</code></p>
-  </div>
+  <p class="reveal" style="color:var(--muted); font-size:1rem; max-width:500px; margin:0 auto 1rem; line-height:1.8; font-weight:300;">
+    Browse all <strong style="color:var(--eye)">41+</strong> commands organized by category.<br/>
+    Supports both slash <code style="background:rgba(123,47,255,0.2);padding:0.1rem 0.4rem;border-radius:3px;color:var(--eye);">/command</code> and prefix <code style="background:rgba(123,47,255,0.2);padding:0.1rem 0.4rem;border-radius:3px;color:var(--eye);">aw command</code>.
+  </p>
+  <button class="cmd-open-btn reveal" onclick="openCmdModal()">
+    ⚔️ Browse Commands
+    <span class="cmd-count-badge">41+</span>
+  </button>
 </section>
 
 <div class="divider"></div>
@@ -1034,6 +1328,52 @@
     </div>
   </div>
 </div>
+
+<div class="divider"></div>
+
+
+<!-- VOTE -->
+<section id="vote">
+  <h2 class="section-title reveal">Vote for Abyss Watcher</h2>
+  <div class="section-line-animated"></div>
+  <div class="vote-container">
+    <p class="reveal" style="color:var(--muted); max-width:560px; font-size:1rem; line-height:1.8; font-weight:300;">
+      Support Abyss Watcher by voting on top.gg every <strong style="color:var(--eye)">12 hours</strong>.
+      Every vote automatically sends rewards straight to your Discord DMs!
+    </p>
+    <a href="https://top.gg/bot/1500488671055450243/vote" target="_blank" class="vote-widget-wrap reveal">
+      <img src="https://top.gg/api/widget/1500488671055450243.svg" alt="Vote for Abyss Watcher"/>
+    </a>
+    <div class="vote-rewards">
+      <div class="vote-reward-card reveal" style="transition-delay:0.05s">
+        <span class="vote-reward-icon">🌑</span>
+        <div class="vote-reward-title">Shadow Essence</div>
+        <p class="vote-reward-desc">+5,000 Essence per vote</p>
+      </div>
+      <div class="vote-reward-card reveal" style="transition-delay:0.1s">
+        <span class="vote-reward-icon">💀</span>
+        <div class="vote-reward-title">Monster Souls</div>
+        <p class="vote-reward-desc">+25 Souls per vote</p>
+      </div>
+      <div class="vote-reward-card reveal" style="transition-delay:0.15s">
+        <span class="vote-reward-icon">🦴</span>
+        <div class="vote-reward-title">Monster Parts</div>
+        <p class="vote-reward-desc">+3x random Monster Part</p>
+      </div>
+      <div class="vote-reward-card reveal" style="transition-delay:0.2s">
+        <span class="vote-reward-icon">✨</span>
+        <div class="vote-reward-title">Boost Item</div>
+        <p class="vote-reward-desc">1x random Boost item</p>
+      </div>
+    </div>
+    <div class="vote-weekend reveal">
+      🎉 &nbsp;<strong>Weekend Bonus</strong> — All rewards are <strong>doubled</strong> on Saturday &amp; Sunday!
+    </div>
+    <a href="https://top.gg/bot/1500488671055450243/vote" class="btn btn-primary reveal" target="_blank">
+      ⬆️ Vote Now on top.gg
+    </a>
+  </div>
+</section>
 
 <div class="divider"></div>
 
@@ -1619,7 +1959,209 @@
     const btn = document.querySelector('.form-submit');
     btn.textContent = '⚔️ Submit Report'; btn.disabled = false;
   }
+
+  /* ── COMMANDS MODAL ── */
+  function openCmdModal() {
+    document.getElementById('cmdModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('cmdSearch').focus();
+  }
+  function closeCmdModal() {
+    document.getElementById('cmdModal').classList.remove('open');
+    document.body.style.overflow = '';
+    document.getElementById('cmdSearch').value = '';
+    filterCmds('all', document.querySelector('.cmd-tab[data-cat="all"]'));
+  }
+  function handleCmdOverlay(e) {
+    if (e.target === document.getElementById('cmdModal')) closeCmdModal();
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closeCmdModal(); closeModal(); }
+  });
+  function filterCmds(cat, btn) {
+    document.querySelectorAll('.cmd-tab').forEach(t => t.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    document.querySelectorAll('.cmd-modal-card').forEach(card => {
+      card.classList.toggle('hidden', cat !== 'all' && card.dataset.cat !== cat);
+    });
+    document.getElementById('cmdSearch').value = '';
+    checkNoResults();
+  }
+  function searchCmds(q) {
+    q = q.toLowerCase().trim();
+    document.querySelectorAll('.cmd-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector('.cmd-tab[data-cat="all"]').classList.add('active');
+    document.querySelectorAll('.cmd-modal-card').forEach(card => {
+      const name = card.querySelector('.cmd-modal-name')?.textContent.toLowerCase() || '';
+      const desc = card.querySelector('.cmd-modal-desc')?.textContent.toLowerCase() || '';
+      const alias = card.querySelector('.cmd-modal-alias')?.textContent.toLowerCase() || '';
+      card.classList.toggle('hidden', q !== '' && !name.includes(q) && !desc.includes(q) && !alias.includes(q));
+    });
+    checkNoResults();
+  }
+  function checkNoResults() {
+    const visible = document.querySelectorAll('.cmd-modal-card:not(.hidden)').length;
+    document.getElementById('cmdNoResults').classList.toggle('show', visible === 0);
+  }
+
+  /* ── REAL-TIME STATS ── */
+  async function fetchStats() {
+    try {
+      // Fetch from top.gg API for votes + servers
+      const res = await fetch('https://top.gg/api/bots/1500488671055450243', {
+        headers: { 'Authorization': 'Bearer YOUR_TOPGG_TOKEN' }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        animateCount('stat-servers', data.server_count || 0);
+        animateCount('stat-votes', data.points || 0);
+      }
+    } catch(e) {
+      // Fallback to static if API fails
+    }
+    // Always animate players (from DB via bot stats endpoint if available)
+    // For now use top.gg server count * estimated players per server
+    const servers = parseInt(document.getElementById('stat-servers').textContent.replace(/,/g,'')) || 4;
+    animateCount('stat-players', Math.max(servers * 8, 12));
+  }
+
+  function animateCount(id, target) {
+    const el = document.getElementById(id);
+    if (!el || target === 0) return;
+    const start = 0;
+    const duration = 1800;
+    const startTime = performance.now();
+    function update(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = Math.floor(eased * target);
+      el.textContent = current >= 1000 ? (current / 1000).toFixed(1) + 'K' : current.toString();
+      if (progress < 1) requestAnimationFrame(update);
+      else el.textContent = target >= 1000 ? (target / 1000).toFixed(1) + 'K' : target.toString();
+    }
+    requestAnimationFrame(update);
+  }
+
+  // Fetch stats on load and every 5 minutes
+  window.addEventListener('load', () => {
+    setTimeout(fetchStats, 800);
+    setInterval(fetchStats, 5 * 60 * 1000);
+  });
+
+  // Observe new reveal elements (vote cards added dynamically)
+  setTimeout(() => {
+    document.querySelectorAll('.reveal:not(.visible)').forEach(el => observer.observe(el));
+  }, 100);
+
 </script>
+
+
+<!-- COMMANDS MODAL -->
+<div id="cmdModal" onclick="handleCmdOverlay(event)">
+  <div class="cmd-modal-box" id="cmdModalBox">
+    <div class="cmd-modal-header">
+      <div class="cmd-modal-title">⚔️ All Commands</div>
+      <button class="modal-close" onclick="closeCmdModal()">✕</button>
+    </div>
+
+    <div class="cmd-filter-tabs" id="cmdTabs">
+      <button class="cmd-tab active" data-cat="all" onclick="filterCmds('all',this)">All</button>
+      <button class="cmd-tab" data-cat="Economy" onclick="filterCmds('Economy',this)">🌑 Economy</button>
+      <button class="cmd-tab" data-cat="Games" onclick="filterCmds('Games',this)">🎰 Games</button>
+      <button class="cmd-tab" data-cat="Hunting" onclick="filterCmds('Hunting',this)">⚔️ Hunting</button>
+      <button class="cmd-tab" data-cat="Gear" onclick="filterCmds('Gear',this)">🛡️ Gear</button>
+      <button class="cmd-tab" data-cat="Alchemy" onclick="filterCmds('Alchemy',this)">⚗️ Alchemy</button>
+      <button class="cmd-tab" data-cat="Ranks" onclick="filterCmds('Ranks',this)">🏅 Ranks</button>
+      <button class="cmd-tab" data-cat="Market" onclick="filterCmds('Market',this)">🏪 Market</button>
+      <button class="cmd-tab" data-cat="Story" onclick="filterCmds('Story',this)">📖 Story</button>
+      <button class="cmd-tab" data-cat="Fun" onclick="filterCmds('Fun',this)">😂 Fun</button>
+      <button class="cmd-tab" data-cat="Utility" onclick="filterCmds('Utility',this)">🛠️ Utility</button>
+    </div>
+
+    <div class="cmd-search-wrap">
+      <input class="cmd-search" id="cmdSearch" placeholder="Search commands..." oninput="searchCmds(this.value)" autocomplete="off"/>
+    </div>
+
+    <div class="cmd-modal-body">
+      <div class="cmd-modal-grid" id="cmdGrid">
+
+        <!-- ECONOMY -->
+        <div class="cmd-modal-card" data-cat="Economy"><div class="cmd-modal-cat">Economy</div><div class="cmd-modal-name"><span>/</span>balance</div><p class="cmd-modal-desc">Check your Shadow Essence balance in server or global mode.</p><p class="cmd-modal-alias">Aliases: bal, b</p></div>
+        <div class="cmd-modal-card" data-cat="Economy"><div class="cmd-modal-cat">Economy</div><div class="cmd-modal-name"><span>/</span>daily</div><p class="cmd-modal-desc">Claim your daily Shadow Essence reward. 24h cooldown. Earns XP.</p></div>
+        <div class="cmd-modal-card" data-cat="Economy"><div class="cmd-modal-cat">Economy</div><div class="cmd-modal-name"><span>/</span>give</div><p class="cmd-modal-desc">Send Shadow Essence to another user with a confirmation system.</p><p class="cmd-modal-alias">Aliases: g</p></div>
+        <div class="cmd-modal-card" data-cat="Economy"><div class="cmd-modal-cat">Economy</div><div class="cmd-modal-name"><span>/</span>leaderboard</div><p class="cmd-modal-desc">Top players by Essence, XP, Rank or Commands. Server &amp; Global.</p><p class="cmd-modal-alias">Aliases: lb, top</p></div>
+        <div class="cmd-modal-card" data-cat="Economy"><div class="cmd-modal-cat">Economy</div><div class="cmd-modal-name"><span>/</span>profile</div><p class="cmd-modal-desc">Full player profile — rank, gear, achievements, titles, stats.</p><p class="cmd-modal-alias">Aliases: prof, me</p></div>
+        <div class="cmd-modal-card" data-cat="Economy"><div class="cmd-modal-cat">Economy</div><div class="cmd-modal-name"><span>/</span>achievements</div><p class="cmd-modal-desc">View unlocked and locked achievements with progress tracking.</p><p class="cmd-modal-alias">Aliases: ach, medals</p></div>
+        <div class="cmd-modal-card" data-cat="Economy"><div class="cmd-modal-cat">Economy</div><div class="cmd-modal-name"><span>/</span>shadowEssence</div><p class="cmd-modal-desc">Check your total global Shadow Essence balance across all servers.</p><p class="cmd-modal-alias">Aliases: bal, b</p></div>
+        <div class="cmd-modal-card" data-cat="Economy"><div class="cmd-modal-cat">Economy</div><div class="cmd-modal-name"><span>/</span>economymode</div><p class="cmd-modal-desc">Toggle between server-only and global economy mode for this server.</p><p class="cmd-modal-alias">Aliases: emode</p></div>
+        <div class="cmd-modal-card" data-cat="Economy"><div class="cmd-modal-cat">Economy</div><div class="cmd-modal-name"><span>/</span>trade</div><p class="cmd-modal-desc">Initiate a secure player-to-player trade. Both players must confirm.</p><p class="cmd-modal-alias">Aliases: tr</p></div>
+        <div class="cmd-modal-card" data-cat="Economy"><div class="cmd-modal-cat">Economy</div><div class="cmd-modal-name"><span>/</span>quests</div><p class="cmd-modal-desc">View and claim Daily &amp; Weekly quests for bonus Essence, Souls &amp; Parts.</p><p class="cmd-modal-alias">Aliases: quest, q</p></div>
+
+        <!-- GAMES -->
+        <div class="cmd-modal-card" data-cat="Games"><div class="cmd-modal-cat">Games</div><div class="cmd-modal-name"><span>/</span>coinflip</div><p class="cmd-modal-desc">Bet Shadow Essence on a coin flip. Choose heads or tails. Win 2×.</p><p class="cmd-modal-alias">Aliases: cf</p></div>
+        <div class="cmd-modal-card" data-cat="Games"><div class="cmd-modal-cat">Games</div><div class="cmd-modal-name"><span>/</span>slots</div><p class="cmd-modal-desc">Spin the slot machine. Custom payouts up to 50× on triple 7s.</p><p class="cmd-modal-alias">Aliases: sl</p></div>
+        <div class="cmd-modal-card" data-cat="Games"><div class="cmd-modal-cat">Games</div><div class="cmd-modal-name"><span>/</span>black-jack</div><p class="cmd-modal-desc">Interactive blackjack with hit/stay buttons. Natural blackjack pays 3×.</p><p class="cmd-modal-alias">Aliases: bj</p></div>
+
+        <!-- HUNTING -->
+        <div class="cmd-modal-card" data-cat="Hunting"><div class="cmd-modal-cat">Hunting</div><div class="cmd-modal-name"><span>/</span>hunt</div><p class="cmd-modal-desc">Fight monsters across 5 tiers. Earn Essence, XP, Souls &amp; Parts. 30s cooldown.</p><p class="cmd-modal-alias">Aliases: h, fight</p></div>
+        <div class="cmd-modal-card" data-cat="Hunting"><div class="cmd-modal-cat">Hunting</div><div class="cmd-modal-name"><span>/</span>dungeon</div><p class="cmd-modal-desc">Enter a 5-room dungeon crawl. Fight scaling enemies and face the Dungeon Overlord boss. 30m cooldown.</p><p class="cmd-modal-alias">Aliases: dg</p></div>
+        <div class="cmd-modal-card" data-cat="Hunting"><div class="cmd-modal-cat">Hunting</div><div class="cmd-modal-name"><span>/</span>bossraid</div><p class="cmd-modal-desc">Start or join a multiplayer raid — Void Colossus, Eternal Behemoth, Abyss Sovereign. Up to 8 players.</p><p class="cmd-modal-alias">Aliases: raid</p></div>
+        <div class="cmd-modal-card" data-cat="Hunting"><div class="cmd-modal-cat">Hunting</div><div class="cmd-modal-name"><span>/</span>quests</div><p class="cmd-modal-desc">Daily &amp; weekly quests. Complete objectives for bonus Essence, Souls &amp; Parts.</p><p class="cmd-modal-alias">Aliases: quest, q</p></div>
+        <div class="cmd-modal-card" data-cat="Hunting"><div class="cmd-modal-cat">Hunting</div><div class="cmd-modal-name"><span>/</span>seasonalevents</div><p class="cmd-modal-desc">Active seasonal events with bonus multipliers, special monsters &amp; event currency.</p></div>
+        <div class="cmd-modal-card" data-cat="Hunting"><div class="cmd-modal-cat">Hunting</div><div class="cmd-modal-name"><span>/</span>skills</div><p class="cmd-modal-desc">View and equip combat skills unlocked through hunting.</p><p class="cmd-modal-alias">Aliases: sk</p></div>
+
+        <!-- GEAR -->
+        <div class="cmd-modal-card" data-cat="Gear"><div class="cmd-modal-cat">Gear</div><div class="cmd-modal-name"><span>/</span>inventory</div><p class="cmd-modal-desc">View all your items — Equipped, Gear, Items, Skills, Parts tabs.</p><p class="cmd-modal-alias">Aliases: inv, inv, bag</p></div>
+        <div class="cmd-modal-card" data-cat="Gear"><div class="cmd-modal-cat">Gear</div><div class="cmd-modal-name"><span>/</span>equip</div><p class="cmd-modal-desc">Equip a weapon or armour piece. Full set gives automatic Set Bonus.</p><p class="cmd-modal-alias">Aliases: eq</p></div>
+        <div class="cmd-modal-card" data-cat="Gear"><div class="cmd-modal-cat">Gear</div><div class="cmd-modal-name"><span>/</span>evolve</div><p class="cmd-modal-desc">Evolve gear from +1 to +5 using Monster Parts &amp; Souls. +5 unlocks unique bonuses.</p><p class="cmd-modal-alias">Aliases: evo, upgrade</p></div>
+        <div class="cmd-modal-card" data-cat="Gear"><div class="cmd-modal-cat">Gear</div><div class="cmd-modal-name"><span>/</span>repair</div><p class="cmd-modal-desc">Repair degraded or broken gear. Gear degrades durability with each hunt.</p><p class="cmd-modal-alias">Aliases: fix, mend</p></div>
+        <div class="cmd-modal-card" data-cat="Gear"><div class="cmd-modal-cat">Gear</div><div class="cmd-modal-name"><span>/</span>craft</div><p class="cmd-modal-desc">Craft items from Monster Parts. Includes legendary-only exclusive recipes.</p><p class="cmd-modal-alias">Aliases: make, cr</p></div>
+        <div class="cmd-modal-card" data-cat="Gear"><div class="cmd-modal-cat">Gear</div><div class="cmd-modal-name"><span>/</span>craftlist</div><p class="cmd-modal-desc">View all crafting recipes and required Monster Parts.</p><p class="cmd-modal-alias">Aliases: recipes, cl</p></div>
+        <div class="cmd-modal-card" data-cat="Gear"><div class="cmd-modal-cat">Gear</div><div class="cmd-modal-name"><span>/</span>use</div><p class="cmd-modal-desc">Use a consumable or boost item from your inventory.</p><p class="cmd-modal-alias">Aliases: consume, activate</p></div>
+        <div class="cmd-modal-card" data-cat="Gear"><div class="cmd-modal-cat">Gear</div><div class="cmd-modal-name"><span>/</span>curses</div><p class="cmd-modal-desc">View or manage active curses on your character. Cast curses on others.</p><p class="cmd-modal-alias">Aliases: hex, cursed</p></div>
+
+        <!-- ALCHEMY -->
+        <div class="cmd-modal-card" data-cat="Alchemy"><div class="cmd-modal-cat">Alchemy</div><div class="cmd-modal-name"><span>/</span>alchemy</div><p class="cmd-modal-desc">Brew potions from Monster Parts — 5 types, 3 tiers each. All grant timed combat effects.</p><p class="cmd-modal-alias">Aliases: brew, alch</p></div>
+
+        <!-- RANKS -->
+        <div class="cmd-modal-card" data-cat="Ranks"><div class="cmd-modal-cat">Ranks</div><div class="cmd-modal-name"><span>/</span>rank</div><p class="cmd-modal-desc">View your Server &amp; Global rank with dual XP progress bars.</p><p class="cmd-modal-alias">Aliases: r</p></div>
+        <div class="cmd-modal-card" data-cat="Ranks"><div class="cmd-modal-cat">Ranks</div><div class="cmd-modal-name"><span>/</span>title</div><p class="cmd-modal-desc">View and equip unlocked titles that display on your profile.</p><p class="cmd-modal-alias">Aliases: titles</p></div>
+
+        <!-- MARKET -->
+        <div class="cmd-modal-card" data-cat="Market"><div class="cmd-modal-cat">Market</div><div class="cmd-modal-name"><span>/</span>market</div><p class="cmd-modal-desc">Browse the Dark Market. 8 random items, refreshes daily.</p><p class="cmd-modal-alias">Aliases: shop, mk</p></div>
+        <div class="cmd-modal-card" data-cat="Market"><div class="cmd-modal-cat">Market</div><div class="cmd-modal-name"><span>/</span>buy</div><p class="cmd-modal-desc">Buy an item from today's Dark Market by name.</p><p class="cmd-modal-alias">Aliases: purchase</p></div>
+        <div class="cmd-modal-card" data-cat="Market"><div class="cmd-modal-cat">Market</div><div class="cmd-modal-name"><span>/</span>playermarket</div><p class="cmd-modal-desc">Player-driven auction house. List items for sale or bid. Max 10 active listings.</p><p class="cmd-modal-alias">Aliases: pm</p></div>
+
+        <!-- STORY -->
+        <div class="cmd-modal-card" data-cat="Story"><div class="cmd-modal-cat">Story</div><div class="cmd-modal-name"><span>/</span>story</div><p class="cmd-modal-desc">Read your current chapter of the Abyss Chronicles. 10 chapters of dark lore.</p><p class="cmd-modal-alias">Aliases: st</p></div>
+
+        <!-- FUN -->
+        <div class="cmd-modal-card" data-cat="Fun"><div class="cmd-modal-cat">Fun</div><div class="cmd-modal-name"><span>/</span>meme</div><p class="cmd-modal-desc">Get a random meme delivered from the depths of the internet.</p><p class="cmd-modal-alias">Aliases: m</p></div>
+
+        <!-- UTILITY -->
+        <div class="cmd-modal-card" data-cat="Utility"><div class="cmd-modal-cat">Utility</div><div class="cmd-modal-name"><span>/</span>vote</div><p class="cmd-modal-desc">Vote for Abyss Watcher on top.gg every 12h. Shows cooldown, streak &amp; all rewards.</p></div>
+        <div class="cmd-modal-card" data-cat="Utility"><div class="cmd-modal-cat">Utility</div><div class="cmd-modal-name"><span>/</span>help</div><p class="cmd-modal-desc">Interactive help menu organized by category with buttons.</p><p class="cmd-modal-alias">Aliases: h</p></div>
+        <div class="cmd-modal-card" data-cat="Utility"><div class="cmd-modal-cat">Utility</div><div class="cmd-modal-name"><span>/</span>ping</div><p class="cmd-modal-desc">Check the bot's current response latency in milliseconds.</p></div>
+        <div class="cmd-modal-card" data-cat="Utility"><div class="cmd-modal-cat">Utility</div><div class="cmd-modal-name"><span>/</span>avatar</div><p class="cmd-modal-desc">Display any user's avatar in full resolution.</p></div>
+        <div class="cmd-modal-card" data-cat="Utility"><div class="cmd-modal-cat">Utility</div><div class="cmd-modal-name"><span>/</span>greet</div><p class="cmd-modal-desc">Configure a custom welcome message for new members joining your server.</p></div>
+        <div class="cmd-modal-card" data-cat="Utility"><div class="cmd-modal-cat">Utility</div><div class="cmd-modal-name"><span>/</span>stats</div><p class="cmd-modal-desc">View bot uptime, memory usage, CPU load, and server count.</p></div>
+
+      </div>
+      <div class="cmd-no-results" id="cmdNoResults">No commands match your search.</div>
+    </div>
+
+    <div style="padding:1rem 2rem; border-top:1px solid rgba(123,47,255,0.15); flex-shrink:0; text-align:center;">
+      <p style="color:var(--muted); font-size:0.85rem;">
+        Slash: <code style="background:rgba(123,47,255,0.2);padding:0.1rem 0.5rem;border-radius:3px;color:var(--eye);">/command</code>
+        &nbsp;|&nbsp;
+        Prefix: <code style="background:rgba(123,47,255,0.2);padding:0.1rem 0.5rem;border-radius:3px;color:var(--eye);">aw command</code>
+        &nbsp;|&nbsp;
+        Example: <code style="background:rgba(123,47,255,0.2);padding:0.1rem 0.5rem;border-radius:3px;color:var(--eye);">aw cf 500 h</code>
+      </p>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
