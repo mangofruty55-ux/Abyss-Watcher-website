@@ -2005,24 +2005,55 @@
   }
 
   /* ── REAL-TIME STATS ── */
+  const BOT_URL = 'https://abyss-watcher-production.up.railway.app';
+
   async function fetchStats() {
+    // ── BOT STATUS + REAL STATS ──
     try {
-      // Fetch from top.gg API for votes + servers
-      const res = await fetch('https://top.gg/api/bots/1500488671055450243', {
-        headers: { 'Authorization': 'Bearer YOUR_TOPGG_TOKEN' }
-      });
+      const res = await fetch(`${BOT_URL}/stats`);
       if (res.ok) {
         const data = await res.json();
-        animateCount('stat-servers', data.server_count || 0);
-        animateCount('stat-votes', data.points || 0);
+
+        // Status dot — green if online, red if not
+        const dot = document.querySelector('.status-dot');
+        const statusText = document.querySelector('.status-badge');
+        if (data.online) {
+          dot.style.background = '#4ade80';
+          dot.style.boxShadow  = '0 0 8px #4ade80';
+          statusText.innerHTML = '<span class="status-dot"></span> Bot Status: Online';
+        } else {
+          dot.style.background = '#f87171';
+          dot.style.boxShadow  = '0 0 8px #f87171';
+          statusText.innerHTML = '<span class="status-dot" style="background:#f87171;box-shadow:0 0 8px #f87171"></span> Bot Status: Offline';
+        }
+
+        if (data.servers > 0)  animateCount('stat-servers', data.servers);
+        if (data.players > 0)  animateCount('stat-players', data.players);
+        if (data.uptimePct)    document.getElementById('stat-uptime').textContent = data.uptimePct + '%';
+        if (data.commands > 0) document.getElementById('stat-commands').textContent = data.commands + '+';
       }
     } catch(e) {
-      // Fallback to static if API fails
+      // Bot unreachable — show offline
+      const dot = document.querySelector('.status-dot');
+      if (dot) {
+        dot.style.background = '#f87171';
+        dot.style.boxShadow  = '0 0 8px #f87171';
+      }
+      const badge = document.querySelector('.status-badge');
+      if (badge) badge.innerHTML = '<span class="status-dot" style="background:#f87171;box-shadow:0 0 8px #f87171"></span> Bot Status: Offline';
     }
-    // Always animate players (from DB via bot stats endpoint if available)
-    // For now use top.gg server count * estimated players per server
-    const servers = parseInt(document.getElementById('stat-servers').textContent.replace(/,/g,'')) || 4;
-    animateCount('stat-players', Math.max(servers * 8, 12));
+
+    // ── TOP.GG PUBLIC WIDGET (no auth needed) ──
+    try {
+      const tggRes = await fetch(
+        `https://top.gg/api/widget/1500488671055450243.json`
+      );
+      if (tggRes.ok) {
+        const tgg = await tggRes.json();
+        if (tgg.points)        animateCount('stat-votes',   parseInt(tgg.points)       || 0);
+        if (tgg.server_count)  animateCount('stat-servers', parseInt(tgg.server_count) || 0);
+      }
+    } catch(e) { /* top.gg unavailable, keep bot stats */ }
   }
 
   function animateCount(id, target) {
