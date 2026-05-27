@@ -2079,6 +2079,7 @@
         if (data.players > 0)  animateCount('stat-players', data.players);
         if (data.uptimePct)    document.getElementById('stat-uptime').textContent = data.uptimePct + '%';
         if (data.commands > 0) document.getElementById('stat-commands').textContent = data.commands + '+';
+        if (data.votes > 0)    animateCount('stat-votes', data.votes);
       }
     } catch(e) {
       // Bot unreachable — show offline
@@ -2091,9 +2092,7 @@
       if (badge) badge.innerHTML = '<span class="status-dot" style="background:#f87171;box-shadow:0 0 8px #f87171"></span> Bot Status: Offline';
     }
 
-    // ── TOTAL VOTES via bot /stats endpoint ──
-    // top.gg's widget API blocks browser CORS requests so we proxy through our own /stats
-    // Make sure your /stats endpoint returns { votes: <number> } from GlobalUser.countDocuments() or top.gg SDK
+    // ── TOTAL VOTES served from /stats endpoint above ──
   }
 
   function animateCount(id, target) {
