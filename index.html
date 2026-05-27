@@ -775,10 +775,11 @@
     /* ── TILT EFFECT ── */
     .tilt {
       transform-style: preserve-3d;
-      transition: transform 0.12s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s, border-color 0.3s;
+      will-change: transform;
+      transition: box-shadow 0.3s, border-color 0.3s;
     }
-    .tilt:hover {
-      transition: transform 0.05s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s, border-color 0.3s;
+    .tilt.tilt-leaving {
+      transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s, border-color 0.3s;
     }
 
     /* ── COUNTER ANIMATION ── */
@@ -1234,42 +1235,62 @@
     <div class="feat-card reveal tilt" style="transition-delay:0.05s">
       <span class="feat-icon">🌑</span>
       <div class="feat-title">Shadow Economy</div>
-      <p class="feat-desc">Earn, spend, and trade Shadow Essence across servers with a powerful global economy system.</p>
+      <p class="feat-desc">Earn, spend, and trade Shadow Essence. Switch between server-only and global economy mode — your balance travels with you.</p>
     </div>
     <div class="feat-card reveal tilt" style="transition-delay:0.1s">
-      <span class="feat-icon">🎰</span>
-      <div class="feat-title">Games of Fate</div>
-      <p class="feat-desc">Test your luck with coinflip, slot machines, blackjack, and more high-stakes games of chance.</p>
+      <span class="feat-icon">🏰</span>
+      <div class="feat-title">Dungeon Crawl</div>
+      <p class="feat-desc">Enter a 5-room dungeon with scaling enemies and face the Dungeon Overlord in the final lair. Full clear earns a God Shard. Die and lose everything.</p>
     </div>
     <div class="feat-card reveal tilt" style="transition-delay:0.15s">
-      <span class="feat-icon">⚔️</span>
-      <div class="feat-title">Dual Rank System</div>
-      <p class="feat-desc">Climb both server and global ranks simultaneously. Every command earns XP toward your next rank.</p>
+      <span class="feat-icon">👁️</span>
+      <div class="feat-title">Boss Raids</div>
+      <p class="feat-desc">Rally up to 8 players to take down world bosses — Void Colossus, Eternal Behemoth, and Abyss Sovereign. Boss HP scales with your crew size.</p>
     </div>
     <div class="feat-card reveal tilt" style="transition-delay:0.2s">
-      <span class="feat-icon">🔮</span>
-      <div class="feat-title">Daily Rewards</div>
-      <p class="feat-desc">Claim your daily Shadow Essence and watch your vault grow over time.</p>
+      <span class="feat-icon">🏬</span>
+      <div class="feat-title">Player Market</div>
+      <p class="feat-desc">A fully player-driven auction house. List weapons, armor, and boosts for others to bid on. Up to 10 active listings per player.</p>
     </div>
     <div class="feat-card reveal tilt" style="transition-delay:0.25s">
-      <span class="feat-icon">📖</span>
-      <div class="feat-title">Abyss Chronicles</div>
-      <p class="feat-desc">Progress through 10 chapters of dark lore. Complete challenges to unlock powerful rewards.</p>
+      <span class="feat-icon">📜</span>
+      <div class="feat-title">Quests</div>
+      <p class="feat-desc">Daily and weekly quests with unique objectives. Complete them for bonus Essence, Monster Souls, and rare Parts on top of normal rewards.</p>
     </div>
     <div class="feat-card reveal tilt" style="transition-delay:0.3s">
-      <span class="feat-icon">🏆</span>
-      <div class="feat-title">Leaderboards</div>
-      <p class="feat-desc">Compete for the top spot in essence, XP, rank and commands used — both server and global.</p>
+      <span class="feat-icon">🌸</span>
+      <div class="feat-title">Seasonal Events</div>
+      <p class="feat-desc">Time-limited seasonal events bring bonus multipliers, special monsters, cheaper alchemy, and exclusive event currency rewards.</p>
     </div>
     <div class="feat-card reveal tilt" style="transition-delay:0.35s">
-      <span class="feat-icon">🃏</span>
-      <div class="feat-title">Blackjack</div>
-      <p class="feat-desc">Play a full interactive blackjack game with hit, stay, and natural blackjack bonuses.</p>
+      <span class="feat-icon">🔮</span>
+      <div class="feat-title">Alchemy System</div>
+      <p class="feat-desc">Brew 5 types of potions across 3 tiers using Monster Parts. Each grants timed combat effects to boost your dungeon and raid performance.</p>
     </div>
     <div class="feat-card reveal tilt" style="transition-delay:0.4s">
-      <span class="feat-icon">🌍</span>
-      <div class="feat-title">Global Economy</div>
-      <p class="feat-desc">Switch between server-only and global economy mode. Your balance travels with you across servers.</p>
+      <span class="feat-icon">🎰</span>
+      <div class="feat-title">Games of Fate</div>
+      <p class="feat-desc">Bet Shadow Essence on coinflip, slot machines with up to 50× payout, and full interactive blackjack with natural blackjack bonuses.</p>
+    </div>
+    <div class="feat-card reveal tilt" style="transition-delay:0.45s">
+      <span class="feat-icon">⚔️</span>
+      <div class="feat-title">Dual Rank System</div>
+      <p class="feat-desc">Climb server and global ranks simultaneously. Every command earns XP. Unlock titles, achievements, and exclusive rewards as you rise.</p>
+    </div>
+    <div class="feat-card reveal tilt" style="transition-delay:0.5s">
+      <span class="feat-icon">📖</span>
+      <div class="feat-title">Abyss Chronicles</div>
+      <p class="feat-desc">Progress through 10 chapters of dark lore. Each chapter has challenges that unlock powerful gear, titles, and story rewards.</p>
+    </div>
+    <div class="feat-card reveal tilt" style="transition-delay:0.55s">
+      <span class="feat-icon">🗳️</span>
+      <div class="feat-title">Vote Rewards</div>
+      <p class="feat-desc">Vote every 12 hours on top.gg for instant rewards — Shadow Essence, Monster Souls, Parts, and a random Boost Item. Double rewards on weekends.</p>
+    </div>
+    <div class="feat-card reveal tilt" style="transition-delay:0.6s">
+      <span class="feat-icon">🏆</span>
+      <div class="feat-title">Leaderboards</div>
+      <p class="feat-desc">Compete for the top spot in Essence, XP, Rank, and Commands Used — tracked both per server and globally across all servers.</p>
     </div>
   </div>
 </section>
@@ -1905,6 +1926,9 @@
 
   /* ── 3D TILT ON CARDS ── */
   document.querySelectorAll('.tilt').forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      card.classList.remove('tilt-leaving');
+    });
     card.addEventListener('mousemove', (e) => {
       const rect = card.getBoundingClientRect();
       const x = e.clientX - rect.left;
@@ -1916,6 +1940,7 @@
       card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
     });
     card.addEventListener('mouseleave', () => {
+      card.classList.add('tilt-leaving');
       card.style.transform = '';
     });
   });
