@@ -1977,26 +1977,112 @@
 
   /* ── FORM SUBMIT ── */
   async function submitReport() {
-    const username = document.getElementById('username').value.trim();
-    const desc = document.getElementById('description').value.trim();
-    if (!username || !desc) { alert('Please fill in at least your Discord username and description.'); return; }
+    const username    = document.getElementById('username').value.trim();
+    const desc        = document.getElementById('description').value.trim();
+    const reportType  = document.getElementById('reportType').value;
+    const command     = document.getElementById('command').value.trim();
+    const steps       = document.getElementById('steps').value.trim();
+
+    if (!username || !desc) {
+      alert('Please fill in at least your Discord username and description.');
+      return;
+    }
+
     const btn = document.querySelector('.form-submit');
-    btn.textContent = 'Submitting...'; btn.disabled = true;
-    const data = {
-      username, type: document.getElementById('reportType').value,
-      command: document.getElementById('command').value, description: desc,
-      steps: document.getElementById('steps').value,
+    btn.textContent = 'Submitting...';
+    btn.disabled = true;
+
+    // ── EMBED COLORS ──
+    const colorMap = {
+      'Bug Report':       0xe74c3c,   // red
+      'Feature Request':  0x7b2fff,   // purple
+      'Other':            0x95a5a6,   // grey
     };
-    try {
-      const res = await fetch('https://formspree.io/f/xnjwovkr', {
-        method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(data),
+
+    // ── EMOJI BY TYPE ──
+    const emojiMap = {
+      'Bug Report':      '🐛',
+      'Feature Request': '💡',
+      'Other':           '❓',
+    };
+
+    const color = colorMap[reportType] || 0x7b2fff;
+    const emoji = emojiMap[reportType] || '📋';
+    const timestamp = new Date().toISOString();
+
+    // ── BUILD FIELDS ──
+    const fields = [
+      {
+        name: '👤 Discord User',
+        value: `\`${username}\``,
+        inline: true,
+      },
+      {
+        name: '📋 Report Type',
+        value: `${emoji} ${reportType}`,
+        inline: true,
+      },
+    ];
+
+    if (command) {
+      fields.push({
+        name: '⚙️ Command / Area',
+        value: `\`${command}\``,
+        inline: true,
       });
-      if (res.ok) {
+    }
+
+    fields.push({
+      name: '📝 Description',
+      value: desc.length > 1000 ? desc.slice(0, 997) + '...' : desc,
+      inline: false,
+    });
+
+    if (steps) {
+      fields.push({
+        name: '🔁 Steps to Reproduce',
+        value: steps.length > 800 ? steps.slice(0, 797) + '...' : steps,
+        inline: false,
+      });
+    }
+
+    const payload = {
+      username: 'Abyss Watcher Reports',
+      avatar_url: 'https://top.gg/api/widget/avatar/1500488671055450243.svg',
+      embeds: [
+        {
+          title: `${emoji} New ${reportType}`,
+          color: color,
+          fields: fields,
+          footer: {
+            text: 'Bot Support System • Submitted via abysswatcher.xyz',
+          },
+          timestamp: timestamp,
+        },
+      ],
+    };
+
+    try {
+      const WEBHOOK = 'https://discord.com/api/webhooks/1513138094658818199/Oaw_TH1XxiZkfcdA4rYUlOek78gxWKT_5fOq7gmyu-6cuGf2D2xB_Vssfv6sGC3Q4t3W';
+      const res = await fetch(WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok || res.status === 204) {
         document.getElementById('formContent').style.display = 'none';
         document.getElementById('formSuccess').style.display = 'block';
-      } else { alert('Something went wrong. Please try again.'); btn.textContent = '⚔️ Submit Report'; btn.disabled = false; }
-    } catch (err) { alert('Network error. Please try again.'); btn.textContent = '⚔️ Submit Report'; btn.disabled = false; }
+      } else {
+        alert('Something went wrong. Please try again.');
+        btn.textContent = '⚔️ Submit Report';
+        btn.disabled = false;
+      }
+    } catch (err) {
+      alert('Network error. Please try again.');
+      btn.textContent = '⚔️ Submit Report';
+      btn.disabled = false;
+    }
   }
 
   function resetForm() {
@@ -2053,7 +2139,7 @@
   }
 
   /* ── REAL-TIME STATS ── */
-  const BOT_URL = 'https://abyss-watcher-production.up.railway.app';
+  const BOT_URL = 'https://abyss-watcher-reupload-production.up.railway.app';
 
   async function fetchStats() {
     // ── BOT STATUS + REAL STATS ──
